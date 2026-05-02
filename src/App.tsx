@@ -837,15 +837,38 @@ function App() {
     const reader = new FileReader();
     reader.onload = (ev) => {
       try {
-        const data = JSON.parse(ev.target?.result as string);
-        if (data.keyboardType) setKeyboardType(data.keyboardType);
-        if (data.switchType) setSwitchType(data.switchType);
-        if (data.theme) setTheme(data.theme);
-        if (data.rgbMode) setRgbMode(data.rgbMode);
-        if (data.keyConfig) setKeyConfig(data.keyConfig);
-      } catch (err) {
-        alert("Invalid profile file");
+        const result = ev.target?.result as string;
+        if (!result) throw new Error("File is empty.");
+        
+        const data = JSON.parse(result);
+        if (typeof data !== 'object' || data === null) {
+          throw new Error("Invalid JSON format. Expected an object.");
+        }
+
+        // Validate types before setting
+        if (data.keyboardType && typeof data.keyboardType === 'string') setKeyboardType(data.keyboardType);
+        if (data.switchType && typeof data.switchType === 'string') setSwitchType(data.switchType);
+        if (data.theme && typeof data.theme === 'string') setTheme(data.theme);
+        if (data.rgbMode && typeof data.rgbMode === 'string') setRgbMode(data.rgbMode);
+        
+        // Strict object check for keyConfig
+        if (data.keyConfig) {
+          if (typeof data.keyConfig === 'object' && !Array.isArray(data.keyConfig)) {
+            setKeyConfig(data.keyConfig);
+          } else {
+            console.error("[Keyboard Studio] Corrupted keyConfig object in profile.", data.keyConfig);
+            throw new Error("Corrupted or invalid Key Configuration data.");
+          }
+        }
+
+        console.log("[Keyboard Studio] Successfully loaded profile!");
+      } catch (err: any) {
+        console.error("[Keyboard Studio] Error importing profile:", err);
+        alert(`Failed to import profile: ${err.message || 'Unknown error'}. Please make sure you are importing a valid keyboard-profile.json file.`);
       }
+    };
+    reader.onerror = () => {
+      alert("Failed to read the file.");
     };
     reader.readAsText(file);
     e.target.value = '';
