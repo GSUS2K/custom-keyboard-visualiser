@@ -670,38 +670,18 @@ function App() {
   };
 
   const renderTextWords = () => {
-    const words = quote.split(' ');
-    let charIndex = 0;
-    
-    return words.map((word, wordIdx) => {
-      const wordSpan = (
-        <span key={wordIdx} className="typeracer-word">
-          {word.split('').map((char, i) => {
-            const currentIdx = charIndex++;
-            let className = 'typeracer-char';
-            
-            if (currentIdx < typed.length) {
-              className += typed[currentIdx] === char ? ' correct' : ' incorrect';
-            } else if (currentIdx === typed.length && !gameFinished) {
-              className += ' cursor';
-            }
-            
-            return <span key={i} className={className}>{char}</span>;
-          })}
-          {/* Render the space after the word, unless it's the last word */}
-          {wordIdx < words.length - 1 && (() => {
-            const currentIdx = charIndex++;
-            let className = 'typeracer-char space';
-            if (currentIdx < typed.length) {
-              className += typed[currentIdx] === ' ' ? ' correct' : ' incorrect';
-            } else if (currentIdx === typed.length && !gameFinished) {
-              className += ' cursor';
-            }
-            return <span key={`space-${wordIdx}`} className={className}>&nbsp;</span>;
-          })()}
+    return quote.split('').map((char, index) => {
+      let className = 'typeracer-char';
+      if (index < typed.length) {
+        className += typed[index] === char ? ' correct' : ' incorrect';
+      } else if (index === typed.length && !gameFinished) {
+        className += ' cursor';
+      }
+      return (
+        <span key={index} className={className}>
+          {char}
         </span>
       );
-      return wordSpan;
     });
   };
 
@@ -739,8 +719,10 @@ function App() {
             <button className="restart-btn" onClick={() => startNewGame()} title="Restart Test">↻</button>
           </div>
           
-          <div className="typeracer-text">
-            {renderTextWords()}
+          <div className="typeracer-viewport">
+            <div className="typeracer-text" style={{ transform: `translateX(calc(${typed.length} * -1ch))` }}>
+              {renderTextWords()}
+            </div>
           </div>
           
           {gameFinished && (
