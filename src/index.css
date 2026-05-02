@@ -1308,13 +1308,43 @@ body.hide-keycaps .key.active::after {
   border-top: 1px dashed rgba(255,255,255,0.1);
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 0.5rem;
+}
+
+.custom-synth-controls .builder-row {
+  background: transparent;
+  border: none;
+  padding: 0.4rem 0;
+  border-radius: 0;
 }
 
 .custom-synth-controls input[type="range"] {
   width: 160px;
   accent-color: var(--accent-color);
   cursor: pointer;
+}
+
+.data-mgt-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ddd;
+  padding: 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.2s;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+.data-mgt-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
 }
 
 .key {

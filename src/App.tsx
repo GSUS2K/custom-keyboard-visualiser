@@ -1251,9 +1251,9 @@ function App() {
         </div>
         <div className="control-group">
           <label>Data Management</label>
-          <div className="game-modes" style={{ width: '100%' }}>
-            <button style={{flex: 1}} onClick={handleExportProfile}>📤 Export Profile</button>
-            <button style={{flex: 1, position: 'relative'}}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', width: '100%' }}>
+            <button className="data-mgt-btn" onClick={handleExportProfile}>📤 Export Profile</button>
+            <button className="data-mgt-btn" style={{ position: 'relative' }}>
               📥 Import Profile
               <input type="file" accept=".json" onChange={handleImportProfile} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }} />
             </button>
