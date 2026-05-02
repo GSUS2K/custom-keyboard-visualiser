@@ -800,6 +800,9 @@ function App() {
               <option value="retro">Retro Beige 1984</option>
               <option value="cyberpunk">Cyberpunk Neon</option>
               <option value="vaporwave">Vaporwave Synth</option>
+              <option value="matcha">Matcha Green</option>
+              <option value="dracula">Dracula (Dark)</option>
+              <option value="arctic">Arctic Ice (Light)</option>
             </select>
           </div>
         </div>

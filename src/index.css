@@ -1,8 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
+:root {
   /* Default Dark Glass Theme */
   --bg-color: #0d0f14;
+  --bg-gradient-1: rgba(252, 163, 17, 0.05);
+  --bg-gradient-2: rgba(99, 102, 241, 0.04);
+  
+  --page-text: #8e95a5;
+  --page-text-highlight: #e2e8f0;
+  --title-shadow: 0 4px 20px rgba(0,0,0,0.8);
+  
+  --panel-bg: rgba(18, 20, 26, 0.6);
+  --panel-border: rgba(255, 255, 255, 0.05);
+  --panel-shadow: 0 15px 35px rgba(0,0,0,0.5);
+
+  --accent-color: #fca311;
+  
   --key-bg: linear-gradient(180deg, #1f2229 0%, #17191e 100%);
   --key-border: #292d36;
   --key-shadow-top: rgba(255, 255, 255, 0.08);
@@ -10,7 +24,6 @@
   --key-text: #8e95a5;
   --key-text-highlight: #e2e8f0;
   
-  --accent-color: #fca311;
   --accent-key-bg: linear-gradient(180deg, #fca311 0%, #d88904 100%);
   --accent-key-border: #b87400;
   --accent-shadow-top: rgba(255, 255, 255, 0.3);
@@ -22,14 +35,24 @@
   --board-border: #1d212b;
   --board-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.95), inset 0 2px 0 rgba(255, 255, 255, 0.04);
   --board-glow: 0 0 100px rgba(252, 163, 17, 0.08);
-
-  --bg-gradient-1: rgba(252, 163, 17, 0.05);
-  --bg-gradient-2: rgba(99, 102, 241, 0.04);
 }
 
 /* Retro Beige Theme */
 .theme-retro {
   --bg-color: #e5e0d8;
+  --bg-gradient-1: rgba(217, 83, 79, 0.05);
+  --bg-gradient-2: rgba(92, 184, 92, 0.05);
+  
+  --page-text: #6b6353;
+  --page-text-highlight: #2c2922;
+  --title-shadow: 0 2px 10px rgba(255,255,255,0.8);
+  
+  --panel-bg: rgba(255, 250, 240, 0.6);
+  --panel-border: rgba(0, 0, 0, 0.08);
+  --panel-shadow: 0 10px 30px rgba(0,0,0,0.1);
+
+  --accent-color: #d9534f;
+  
   --key-bg: linear-gradient(180deg, #f4f0e6 0%, #e8e4da 100%);
   --key-border: #d1ccbf;
   --key-shadow-top: rgba(255, 255, 255, 0.8);
@@ -37,7 +60,6 @@
   --key-text: #5a5549;
   --key-text-highlight: #2c2922;
   
-  --accent-color: #d9534f;
   --accent-key-bg: linear-gradient(180deg, #d9534f 0%, #b54541 100%);
   --accent-key-border: #a33e3a;
   --accent-shadow-top: rgba(255, 255, 255, 0.4);
@@ -49,14 +71,24 @@
   --board-border: #c4beaf;
   --board-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.3), inset 0 2px 0 rgba(255, 255, 255, 0.5);
   --board-glow: 0 0 100px rgba(217, 83, 79, 0.1);
-
-  --bg-gradient-1: rgba(217, 83, 79, 0.05);
-  --bg-gradient-2: rgba(92, 184, 92, 0.05);
 }
 
 /* Vaporwave Theme */
 .theme-vaporwave {
   --bg-color: #2b1055;
+  --bg-gradient-1: rgba(255, 113, 206, 0.15);
+  --bg-gradient-2: rgba(1, 205, 254, 0.15);
+  
+  --page-text: #b892ff;
+  --page-text-highlight: #ff71ce;
+  --title-shadow: 0 0 15px rgba(255, 113, 206, 0.6);
+  
+  --panel-bg: rgba(61, 28, 115, 0.5);
+  --panel-border: rgba(255, 113, 206, 0.2);
+  --panel-shadow: 0 15px 35px rgba(0,0,0,0.6);
+
+  --accent-color: #01cdfe;
+  
   --key-bg: linear-gradient(180deg, #3d1c73 0%, #2b1055 100%);
   --key-border: #522796;
   --key-shadow-top: rgba(255, 113, 206, 0.3);
@@ -64,7 +96,6 @@
   --key-text: #01cdfe;
   --key-text-highlight: #fffb96;
   
-  --accent-color: #ff71ce;
   --accent-key-bg: linear-gradient(180deg, #ff71ce 0%, #d65ab1 100%);
   --accent-key-border: #a8478c;
   --accent-shadow-top: rgba(255, 255, 255, 0.4);
@@ -76,14 +107,24 @@
   --board-border: #2e125c;
   --board-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.95), inset 0 2px 0 rgba(1, 205, 254, 0.2);
   --board-glow: 0 0 100px rgba(255, 113, 206, 0.2);
-
-  --bg-gradient-1: rgba(255, 113, 206, 0.15);
-  --bg-gradient-2: rgba(1, 205, 254, 0.15);
 }
 
 /* Cyberpunk Theme */
 .theme-cyberpunk {
   --bg-color: #0d0221;
+  --bg-gradient-1: rgba(253, 251, 0, 0.1);
+  --bg-gradient-2: rgba(0, 240, 255, 0.1);
+  
+  --page-text: #00b8c4;
+  --page-text-highlight: #00f0ff;
+  --title-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+  
+  --panel-bg: rgba(0, 0, 0, 0.7);
+  --panel-border: rgba(0, 240, 255, 0.2);
+  --panel-shadow: 0 15px 35px rgba(0, 240, 255, 0.1);
+
+  --accent-color: #fdfb00;
+  
   --key-bg: linear-gradient(180deg, #fdfb00 0%, #c4c200 100%);
   --key-border: #8f8d00;
   --key-shadow-top: rgba(255, 255, 255, 0.4);
@@ -91,7 +132,6 @@
   --key-text: #0d0221;
   --key-text-highlight: #000;
   
-  --accent-color: #00f0ff;
   --accent-key-bg: linear-gradient(180deg, #00f0ff 0%, #00b8c4 100%);
   --accent-key-border: #00878f;
   --accent-shadow-top: rgba(255, 255, 255, 0.5);
@@ -103,18 +143,114 @@
   --board-border: #111;
   --board-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.95), inset 0 2px 0 rgba(253, 251, 0, 0.3);
   --board-glow: 0 0 100px rgba(0, 240, 255, 0.15);
-
-  --bg-gradient-1: rgba(253, 251, 0, 0.1);
-  --bg-gradient-2: rgba(0, 240, 255, 0.1);
-
-  /* Override text for page in Cyberpunk */
-  --page-text-highlight: #00f0ff;
-  --page-text: #00b8c4;
 }
 
-:root {
-  --page-text-highlight: var(--key-text-highlight);
-  --page-text: var(--key-text);
+/* Matcha Green Theme */
+.theme-matcha {
+  --bg-color: #f3f5ed;
+  --bg-gradient-1: rgba(138, 171, 137, 0.1);
+  --bg-gradient-2: rgba(206, 219, 185, 0.2);
+  
+  --page-text: #5b695a;
+  --page-text-highlight: #344333;
+  --title-shadow: 0 2px 10px rgba(255,255,255,0.8);
+  
+  --panel-bg: rgba(255, 255, 255, 0.6);
+  --panel-border: rgba(138, 171, 137, 0.2);
+  --panel-shadow: 0 10px 30px rgba(138, 171, 137, 0.15);
+
+  --accent-color: #799478;
+  
+  --key-bg: linear-gradient(180deg, #e8ede3 0%, #d8e0d1 100%);
+  --key-border: #c2ceb9;
+  --key-shadow-top: rgba(255, 255, 255, 0.9);
+  --key-shadow-bottom: rgba(0, 0, 0, 0.15);
+  --key-text: #697a67;
+  --key-text-highlight: #242e23;
+  
+  --accent-key-bg: linear-gradient(180deg, #8aab89 0%, #729171 100%);
+  --accent-key-border: #5b755a;
+  --accent-shadow-top: rgba(255, 255, 255, 0.5);
+  --accent-shadow-bottom: rgba(0, 0, 0, 0.2);
+
+  --knob-bg: conic-gradient(from 180deg at 50% 50%, #d8e0d1 0deg, #f3f5ed 180deg, #d8e0d1 360deg);
+  
+  --board-bg: #ecefdf;
+  --board-border: #d4d9c0;
+  --board-shadow: 0 30px 60px -15px rgba(60, 70, 50, 0.2), inset 0 2px 0 rgba(255, 255, 255, 0.7);
+  --board-glow: 0 0 80px rgba(138, 171, 137, 0.15);
+}
+
+/* Dracula Theme */
+.theme-dracula {
+  --bg-color: #282a36;
+  --bg-gradient-1: rgba(255, 121, 198, 0.05);
+  --bg-gradient-2: rgba(189, 147, 249, 0.05);
+  
+  --page-text: #6272a4;
+  --page-text-highlight: #f8f8f2;
+  --title-shadow: 0 4px 20px rgba(0,0,0,0.8);
+  
+  --panel-bg: rgba(68, 71, 90, 0.4);
+  --panel-border: rgba(98, 114, 164, 0.3);
+  --panel-shadow: 0 15px 35px rgba(0,0,0,0.5);
+
+  --accent-color: #ff79c6;
+  
+  --key-bg: linear-gradient(180deg, #44475a 0%, #363847 100%);
+  --key-border: #6272a4;
+  --key-shadow-top: rgba(255, 255, 255, 0.1);
+  --key-shadow-bottom: rgba(0, 0, 0, 0.8);
+  --key-text: #f8f8f2;
+  --key-text-highlight: #8be9fd;
+  
+  --accent-key-bg: linear-gradient(180deg, #ff79c6 0%, #d45e9f 100%);
+  --accent-key-border: #b84f89;
+  --accent-shadow-top: rgba(255, 255, 255, 0.3);
+  --accent-shadow-bottom: rgba(0, 0, 0, 0.6);
+
+  --knob-bg: conic-gradient(from 180deg at 50% 50%, #44475a 0deg, #6272a4 180deg, #44475a 360deg);
+  
+  --board-bg: #21222c;
+  --board-border: #191a21;
+  --board-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.95), inset 0 2px 0 rgba(255, 255, 255, 0.04);
+  --board-glow: 0 0 100px rgba(189, 147, 249, 0.08);
+}
+
+/* Arctic Ice Theme */
+.theme-arctic {
+  --bg-color: #eef2f5;
+  --bg-gradient-1: rgba(136, 192, 208, 0.1);
+  --bg-gradient-2: rgba(129, 161, 193, 0.1);
+  
+  --page-text: #4c566a;
+  --page-text-highlight: #2e3440;
+  --title-shadow: 0 2px 15px rgba(255,255,255,0.9);
+  
+  --panel-bg: rgba(255, 255, 255, 0.7);
+  --panel-border: rgba(216, 222, 233, 0.8);
+  --panel-shadow: 0 15px 35px rgba(46, 52, 64, 0.1);
+
+  --accent-color: #5e81ac;
+  
+  --key-bg: linear-gradient(180deg, #ffffff 0%, #eceff4 100%);
+  --key-border: #d8dee9;
+  --key-shadow-top: rgba(255, 255, 255, 1);
+  --key-shadow-bottom: rgba(46, 52, 64, 0.15);
+  --key-text: #4c566a;
+  --key-text-highlight: #5e81ac;
+  
+  --accent-key-bg: linear-gradient(180deg, #88c0d0 0%, #68a2b3 100%);
+  --accent-key-border: #4d8697;
+  --accent-shadow-top: rgba(255, 255, 255, 0.5);
+  --accent-shadow-bottom: rgba(46, 52, 64, 0.2);
+
+  --knob-bg: conic-gradient(from 180deg at 50% 50%, #eceff4 0deg, #ffffff 180deg, #eceff4 360deg);
+  
+  --board-bg: #e5e9f0;
+  --board-border: #d8dee9;
+  --board-shadow: 0 30px 60px -15px rgba(46, 52, 64, 0.2), inset 0 2px 0 rgba(255, 255, 255, 0.8);
+  --board-glow: 0 0 100px rgba(136, 192, 208, 0.15);
 }
 
 * {
@@ -164,7 +300,7 @@ body {
   color: var(--page-text-highlight);
   font-weight: 700;
   letter-spacing: -0.04em;
-  text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  text-shadow: var(--title-shadow);
   transition: color 0.5s ease;
 }
 
@@ -188,12 +324,12 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--panel-bg);
   padding: 0.8rem 1.5rem;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--panel-border);
   min-width: 120px;
-  box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+  box-shadow: var(--panel-shadow);
 }
 
 .visualizer-box {
@@ -228,12 +364,12 @@ body {
   justify-content: center;
   align-items: center;
   gap: 1.5rem;
-  background: rgba(18, 20, 26, 0.4);
+  background: var(--panel-bg);
   padding: 1rem 1.5rem;
   border-radius: 16px;
-  border: 1px solid rgba(150, 150, 150, 0.1);
+  border: 1px solid var(--panel-border);
   backdrop-filter: blur(12px);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+  box-shadow: var(--panel-shadow);
 }
 
 .control-divider {
@@ -545,10 +681,10 @@ select:hover, select:focus {
 
 /* TypeRacer Game */
 .typeracer-container {
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--panel-bg);
   padding: 1.5rem 2rem;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--panel-border);
   margin-bottom: 0.5rem;
   width: 100%;
   max-width: 850px;
@@ -556,9 +692,11 @@ select:hover, select:focus {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+  box-shadow: inset 0 2px 10px rgba(0,0,0,0.2), var(--panel-shadow);
   position: relative;
   transition: opacity 0.3s ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .typeracer-header {
