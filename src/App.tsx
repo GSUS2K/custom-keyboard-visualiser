@@ -495,6 +495,10 @@ function App() {
   const startTime = useRef<number | null>(null);
   const [timeElapsed, setTimeElapsed] = useState(0);
   
+  // Operation Mode
+  const [operationMode, setOperationMode] = useState<'race' | 'sandbox'>('race');
+  const [sandboxText, setSandboxText] = useState('');
+  
   // Stats
   const [wpm, setWpm] = useState(0);
   const [cpm, setCpm] = useState(0);
@@ -503,15 +507,17 @@ function App() {
 
   // UI
   const [showSettings, setShowSettings] = useState(true);
+  const [rgbMode, setRgbMode] = useState('theme');
 
   useEffect(() => {
-    typedRef.current = typed;
-  }, [typed]);
+    typedRef.current = operationMode === 'race' ? typed : sandboxText;
+  }, [typed, sandboxText, operationMode]);
 
   const startNewGame = useCallback((targetWords: number = wordCountTarget) => {
     setWordCountTarget(targetWords);
     setQuote(generateQuote(targetWords));
     setTyped('');
+    setSandboxText('');
     typedRef.current = '';
     setGameActive(false);
     setGameFinished(false);
@@ -525,8 +531,7 @@ function App() {
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.repeat) return;
     
-    // Quick restart shortcut: Tab + Enter is nice, but we can also just let the user click the button.
-    // Let's intercept Enter if game is finished
+    // Quick restart shortcut
     if (gameFinished && e.key === 'Enter') {
       startNewGame();
       return;
@@ -545,7 +550,35 @@ function App() {
       return next;
     });
 
-    if (gameFinished) return;
+    if (gameFinished && operationMode === 'race') return;
+
+    if (operationMode === 'sandbox') {
+      setSandboxText(prev => {
+        let nextText = prev;
+        if (e.key === 'Backspace') {
+          nextText = prev.slice(0, -1);
+        } else if (e.key === 'Enter') {
+          nextText = prev + '\n';
+        } else if (e.key.length === 1) {
+          if (!gameActive && prev.length === 0) {
+            setGameActive(true);
+            startTime.current = Date.now();
+          }
+          nextText = prev + e.key;
+        }
+
+        if (startTime.current) {
+          const elapsedMinutes = (Date.now() - startTime.current) / 60000;
+          if (elapsedMinutes > 0) {
+            setCpm(Math.round(nextText.length / elapsedMinutes));
+            setWpm(Math.round((nextText.length / 5) / elapsedMinutes));
+          }
+        }
+        
+        return nextText;
+      });
+      return;
+    }
 
     // TypeRacer Logic
     setTyped(prev => {
@@ -623,8 +656,8 @@ function App() {
   }, [preset]);
 
   useEffect(() => {
-    document.body.className = `theme-${theme}`;
-  }, [theme]);
+    document.body.className = `theme-${theme} rgb-${rgbMode}`;
+  }, [theme, rgbMode]);
 
   useEffect(() => {
     let interval: any;
@@ -755,29 +788,44 @@ function App() {
           </div>
         </div>
 
-        <div className={`typeracer-container ${gameFinished ? 'finished' : ''}`}>
-          <div className="typeracer-header">
-            <div className="game-modes">
-              <button className={wordCountTarget === 10 ? 'active' : ''} onClick={() => startNewGame(10)}>10</button>
-              <button className={wordCountTarget === 20 ? 'active' : ''} onClick={() => startNewGame(20)}>20</button>
-              <button className={wordCountTarget === 50 ? 'active' : ''} onClick={() => startNewGame(50)}>50</button>
-              <button className={wordCountTarget === 100 ? 'active' : ''} onClick={() => startNewGame(100)}>100</button>
+        {operationMode === 'race' ? (
+          <div className={`typeracer-container ${gameFinished ? 'finished' : ''}`}>
+            <div className="typeracer-header">
+              <div className="game-modes">
+                <button className={wordCountTarget === 10 ? 'active' : ''} onClick={() => startNewGame(10)}>10</button>
+                <button className={wordCountTarget === 20 ? 'active' : ''} onClick={() => startNewGame(20)}>20</button>
+                <button className={wordCountTarget === 50 ? 'active' : ''} onClick={() => startNewGame(50)}>50</button>
+                <button className={wordCountTarget === 100 ? 'active' : ''} onClick={() => startNewGame(100)}>100</button>
+              </div>
+              <button className="restart-btn" onClick={() => startNewGame()} title="Restart Test">↻</button>
             </div>
-            <button className="restart-btn" onClick={() => startNewGame()} title="Restart Test">↻</button>
+            
+            <div className="typeracer-viewport">
+              <div className="typeracer-text" style={{ transform: `translateX(calc(${typed.length} * -1ch))` }}>
+                {renderTextWords()}
+              </div>
+            </div>
+            
+            {gameFinished && (
+              <div className="typeracer-finish">
+                Test Completed! Press <strong>Enter</strong> or click Restart to try again.
+              </div>
+            )}
           </div>
-          
-          <div className="typeracer-viewport">
-            <div className="typeracer-text" style={{ transform: `translateX(calc(${typed.length} * -1ch))` }}>
-              {renderTextWords()}
+        ) : (
+          <div className="sandbox-container">
+            <div className="sandbox-header">
+              <div className="sandbox-title">📝 Freeplay Sandbox</div>
+              <button className="restart-btn" onClick={() => { setSandboxText(''); setGameActive(false); setWpm(0); setCpm(0); setTimeElapsed(0); startTime.current = null; }} title="Clear Text">↻ Clear</button>
+            </div>
+            <div className="sandbox-viewport">
+              <div className="sandbox-text">
+                {sandboxText || <span className="sandbox-placeholder">Start typing freely...</span>}
+                <span className="sandbox-cursor"></span>
+              </div>
             </div>
           </div>
-          
-          {gameFinished && (
-            <div className="typeracer-finish">
-              Test Completed! Press <strong>Enter</strong> or click Restart to try again.
-            </div>
-          )}
-        </div>
+        )}
         
         <div className="keyboard-chassis">
           <div className="status-leds">
@@ -806,6 +854,23 @@ function App() {
           <h2>Studio Settings</h2>
           <button className="close-btn" onClick={() => setShowSettings(false)}>✕</button>
         </div>
+        <div className="control-group">
+          <label>Operation Mode</label>
+          <div className="game-modes" style={{ width: '100%', marginBottom: '0.5rem' }}>
+            <button style={{flex: 1}} className={operationMode === 'race' ? 'active' : ''} onClick={() => setOperationMode('race')}>🏁 Race</button>
+            <button style={{flex: 1}} className={operationMode === 'sandbox' ? 'active' : ''} onClick={() => setOperationMode('sandbox')}>📝 Sandbox</button>
+          </div>
+        </div>
+
+        <div className="control-group">
+          <label>RGB Lighting</label>
+          <select value={rgbMode} onChange={e => setRgbMode(e.target.value)}>
+            <option value="theme">Theme Default</option>
+            <option value="rainbow">Rainbow Wave</option>
+            <option value="breathe">Breathing Pulse</option>
+          </select>
+        </div>
+
         <div className="control-group">
           <label>Real Keyboard Models</label>
           <select value={preset} onChange={e => setPreset(e.target.value)} style={{ borderColor: 'var(--accent-color)' }}>
