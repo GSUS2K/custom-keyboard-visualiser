@@ -1,5 +1,7 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, createContext, useContext } from 'react';
 import './index.css';
+
+export const KeyboardConfigContext = createContext<Record<string, { bg?: string, text?: string, sound?: string, label?: string }>>({});
 
 // Reusable Audio Context and Analyser
 let audioCtx: AudioContext | null = null;
@@ -148,14 +150,25 @@ const generateQuote = (wordCount: number) => {
 }
 
 const Key = ({ label, subLabel, span = 4, className = '', keyCode, activeKeys, onManualPress }: any) => {
+  const configMap = useContext(KeyboardConfigContext);
+  const keyConfig = configMap[keyCode] || {};
   const isPressed = activeKeys.has(keyCode);
+  
+  const customBg = keyConfig.bg;
+  const customColor = keyConfig.text;
+  const displayLabel = keyConfig.label !== undefined ? keyConfig.label : label;
+
   return (
     <div 
       className={`key ${className} ${isPressed ? 'active' : ''}`}
-      style={{ gridColumn: `span ${span}` }}
+      style={{ 
+        gridColumn: `span ${span}`,
+        ...(customBg ? { background: customBg, borderColor: customBg } : {}),
+        ...(customColor ? { color: customColor } : {})
+      }}
       onMouseDown={() => onManualPress(keyCode)}
     >
-      {label}
+      {displayLabel}
       {subLabel && <div className="sub-label">{subLabel}</div>}
     </div>
   );
@@ -507,6 +520,11 @@ function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sandboxCursorRef = useRef<HTMLSpanElement>(null);
 
+  // Build Mode
+  const [buildMode, setBuildMode] = useState(false);
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const [keyConfig, setKeyConfig] = useState<Record<string, { bg?: string, text?: string, sound?: string, label?: string }>>({});
+
   // UI
   const [showSettings, setShowSettings] = useState(true);
   const [rgbMode, setRgbMode] = useState('theme');
@@ -542,6 +560,11 @@ function App() {
   }, [wordCountTarget]);
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (buildMode) {
+      e.preventDefault();
+      setSelectedKey(e.code);
+      return;
+    }
     // Quick restart shortcut
     if (gameFinished && e.key === 'Enter') {
       startNewGame();
@@ -554,7 +577,7 @@ function App() {
     }
 
     if (soundEnabled) {
-      playTypingSound(switchType);
+      playTypingSound(keyConfig[e.code]?.sound || switchType);
     }
     
     if (particlesEnabled && e.key.length === 1) {
@@ -652,7 +675,7 @@ function App() {
       return nextTyped;
     });
 
-  }, [switchType, gameActive, gameFinished, quote, startNewGame, soundEnabled, particlesEnabled, operationMode, rgbMode]);
+  }, [switchType, gameActive, gameFinished, quote, startNewGame, soundEnabled, particlesEnabled, operationMode, rgbMode, buildMode, keyConfig]);
 
   const handleKeyUp = useCallback((e: KeyboardEvent) => {
     setActiveKeys(prev => {
@@ -758,6 +781,11 @@ function App() {
   }, [theme]);
 
   const handleManualPress = (code: string) => {
+    if (buildMode) {
+      setSelectedKey(code);
+      return;
+    }
+
     const charMap: Record<string, string> = { Space: ' ', Enter: 'Enter', Backspace: 'Backspace' };
     let key = charMap[code];
     
@@ -867,17 +895,80 @@ function App() {
           </div>
         )}
         
-        <div className={`keyboard-chassis ${viewAngle === 'flat' ? 'flat-view' : ''}`}>
+        {buildMode && selectedKey && (
+          <div className="key-builder-modal">
+            <div className="modal-header">
+              <h3>Editing Key: {selectedKey.replace('Key', '').replace('Digit', '')}</h3>
+              <button className="close-btn" onClick={() => setSelectedKey(null)}>✕</button>
+            </div>
+            <div className="modal-body">
+              <div className="builder-row">
+                <label>Custom Label:</label>
+                <input 
+                  type="text" 
+                  maxLength={5} 
+                  value={keyConfig[selectedKey]?.label || ''} 
+                  onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], label: e.target.value } }))}
+                  placeholder="Default"
+                />
+              </div>
+              
+              <div className="builder-row">
+                <label>Keycap Color:</label>
+                <div className="color-picker-wrapper">
+                  <input 
+                    type="color" 
+                    value={keyConfig[selectedKey]?.bg || '#ffffff'} 
+                    onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], bg: e.target.value } }))}
+                  />
+                  <button onClick={() => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], bg: undefined } }))}>Clear</button>
+                </div>
+              </div>
+
+              <div className="builder-row">
+                <label>Text Color:</label>
+                <div className="color-picker-wrapper">
+                  <input 
+                    type="color" 
+                    value={keyConfig[selectedKey]?.text || '#000000'} 
+                    onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], text: e.target.value } }))}
+                  />
+                  <button onClick={() => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], text: undefined } }))}>Clear</button>
+                </div>
+              </div>
+
+              <div className="builder-row">
+                <label>Switch Sound:</label>
+                <select 
+                  value={keyConfig[selectedKey]?.sound || 'default'} 
+                  onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], sound: e.target.value === 'default' ? undefined : e.target.value } }))}
+                >
+                  <option value="default">Board Default</option>
+                  <option value="linear">Thocky Linear</option>
+                  <option value="tactile">Sharp Tactile</option>
+                  <option value="clicky">Loud Clicky</option>
+                  <option value="topre">Deep Topre</option>
+                  <option value="silent">Silent Linear</option>
+                  <option value="heavy_tactile">Massive Bump</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className={`keyboard-chassis ${viewAngle === 'flat' ? 'flat-view' : ''} ${buildMode ? 'build-mode-active' : ''}`}>
           <div className="status-leds">
             <div className={`led ${activeKeys.has('CapsLock') ? 'active' : ''}`} title="Caps Lock"></div>
             {keyboardType !== '40' && <div className="led active" title="Battery"></div>}
             {keyboardType !== '40' && <div className="led active" title="Connection"></div>}
           </div>
 
-          {keyboardType === '40' && <Keyboard40 activeKeys={activeKeys} onManualPress={handleManualPress} />}
-          {keyboardType === '60' && <Keyboard60 activeKeys={activeKeys} onManualPress={handleManualPress} />}
-          {keyboardType === '65' && <Keyboard65 activeKeys={activeKeys} onManualPress={handleManualPress} />}
-          {keyboardType === '75' && <Keyboard75 activeKeys={activeKeys} onManualPress={handleManualPress} />}
+          <KeyboardConfigContext.Provider value={keyConfig}>
+            {keyboardType === '40' && <Keyboard40 activeKeys={activeKeys} onManualPress={handleManualPress} />}
+            {keyboardType === '60' && <Keyboard60 activeKeys={activeKeys} onManualPress={handleManualPress} />}
+            {keyboardType === '65' && <Keyboard65 activeKeys={activeKeys} onManualPress={handleManualPress} />}
+            {keyboardType === '75' && <Keyboard75 activeKeys={activeKeys} onManualPress={handleManualPress} />}
+          </KeyboardConfigContext.Provider>
         </div>
       </div>
 
@@ -902,6 +993,7 @@ function App() {
             <button style={{flex: '1 1 40%'}} className={particlesEnabled ? 'active' : ''} onClick={(e) => { setParticlesEnabled(!particlesEnabled); e.currentTarget.blur(); }}>✨ Particles</button>
             <button style={{flex: '1 1 40%'}} className={showKeycaps ? 'active' : ''} onClick={(e) => { setShowKeycaps(!showKeycaps); e.currentTarget.blur(); }}>⌨️ Keycaps</button>
             <button style={{flex: '1 1 40%'}} className={viewAngle === '3d' ? 'active' : ''} onClick={(e) => { setViewAngle(viewAngle === '3d' ? 'flat' : '3d'); e.currentTarget.blur(); }}>📐 3D View</button>
+            <button style={{flex: '1 1 100%'}} className={`build-mode-btn ${buildMode ? 'active' : ''}`} onClick={(e) => { setBuildMode(!buildMode); setSelectedKey(null); e.currentTarget.blur(); }}>🛠️ Key Builder Mode</button>
           </div>
         </div>
 

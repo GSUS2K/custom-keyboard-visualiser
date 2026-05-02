@@ -1084,3 +1084,113 @@ body.hide-keycaps .key.active::after {
   filter: hue-rotate(var(--reactive-hue, 0deg)) brightness(1.5) drop-shadow(0 0 30px var(--accent-color));
   transition: filter 0.05s ease-out;
 }
+
+/* Builder Mode Styles */
+.build-mode-btn.active {
+  background: #fdfb00;
+  color: #000;
+  border-color: #fdfb00;
+  box-shadow: 0 0 15px rgba(253, 251, 0, 0.4);
+}
+
+.build-mode-active {
+  box-shadow: 0 15px 0 rgba(253, 251, 0, 0.4), 0 0 50px rgba(253, 251, 0, 0.1) !important;
+  border: 2px dashed #fdfb00 !important;
+}
+
+.build-mode-active .key:hover {
+  filter: brightness(1.5);
+  box-shadow: 0 0 15px #fdfb00;
+  transform: translateY(-2px);
+  z-index: 50;
+}
+
+.key-builder-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(10, 10, 15, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--accent-color);
+  padding: 2rem;
+  border-radius: 16px;
+  z-index: 2000;
+  width: 350px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px var(--bg-gradient-1);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: popIn 0.2s ease-out;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 1rem;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: var(--page-text-highlight);
+  font-size: 1.2rem;
+}
+
+.modal-header button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.builder-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.builder-row label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.builder-row input[type="text"] {
+  background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  padding: 0.5rem;
+  border-radius: 6px;
+  width: 100px;
+  text-align: center;
+}
+
+.color-picker-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.color-picker-wrapper input[type="color"] {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: none;
+}
+
+.color-picker-wrapper button {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  background: rgba(255,255,255,0.1);
+}
+
+.builder-row select {
+  max-width: 150px;
+  font-size: 0.85rem;
+}
