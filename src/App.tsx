@@ -572,6 +572,11 @@ function App() {
   }, [wordCountTarget]);
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    // Prevent global key capture if the user is typing in an input/select
+    if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLSelectElement) {
+      return;
+    }
+
     if (buildMode) {
       e.preventDefault();
       setSelectedKey(e.code);
@@ -970,12 +975,13 @@ function App() {
         {buildMode && selectedKey && (
           <div className="key-builder-modal">
             <div className="modal-header">
-              <h3>Editing Key: {selectedKey.replace('Key', '').replace('Digit', '')}</h3>
+              <h3>Editing: {selectedKey.replace('Key', '').replace('Digit', '')}</h3>
               <button className="close-btn" onClick={() => setSelectedKey(null)}>✕</button>
             </div>
+            
             <div className="modal-body">
               <div className="builder-row">
-                <label>Custom Label:</label>
+                <label>Custom Label</label>
                 <input 
                   type="text" 
                   maxLength={5} 
@@ -986,44 +992,53 @@ function App() {
               </div>
               
               <div className="builder-row">
-                <label>Keycap Color:</label>
+                <label>Keycap Color</label>
                 <div className="color-picker-wrapper">
                   <input 
                     type="color" 
                     value={keyConfig[selectedKey]?.bg || '#ffffff'} 
                     onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], bg: e.target.value } }))}
                   />
-                  <button onClick={() => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], bg: undefined } }))}>Clear</button>
+                  <button className="clear-color-btn" title="Reset Color" onClick={() => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], bg: undefined } }))}>↺</button>
                 </div>
               </div>
 
               <div className="builder-row">
-                <label>Text Color:</label>
+                <label>Text Color</label>
                 <div className="color-picker-wrapper">
                   <input 
                     type="color" 
                     value={keyConfig[selectedKey]?.text || '#000000'} 
                     onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], text: e.target.value } }))}
                   />
-                  <button onClick={() => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], text: undefined } }))}>Clear</button>
+                  <button className="clear-color-btn" title="Reset Color" onClick={() => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], text: undefined } }))}>↺</button>
                 </div>
               </div>
 
-              <div className="builder-row">
-                <label>Switch Sound:</label>
-                <select 
-                  value={keyConfig[selectedKey]?.sound || 'default'} 
-                  onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], sound: e.target.value === 'default' ? undefined : e.target.value } }))}
-                >
-                  <option value="default">Board Default</option>
-                  <option value="linear">Thocky Linear</option>
-                  <option value="tactile">Sharp Tactile</option>
-                  <option value="clicky">Loud Clicky</option>
-                  <option value="topre">Deep Topre</option>
-                  <option value="silent">Silent Linear</option>
-                  <option value="heavy_tactile">Massive Bump</option>
-                  <option value="custom">🛠️ Custom Synthesizer</option>
-                </select>
+              <div className="builder-row" style={{ marginTop: '0.5rem' }}>
+                <label>Switch Sound</label>
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  <select 
+                    value={keyConfig[selectedKey]?.sound || 'default'} 
+                    onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], sound: e.target.value === 'default' ? undefined : e.target.value } }))}
+                  >
+                    <option value="default">Default Match</option>
+                    <option value="linear">Thocky Linear</option>
+                    <option value="tactile">Sharp Tactile</option>
+                    <option value="clicky">Loud Clicky</option>
+                    <option value="topre">Deep Topre</option>
+                    <option value="silent">Silent Linear</option>
+                    <option value="heavy_tactile">Massive Bump</option>
+                    <option value="custom">🛠️ Custom Synth</option>
+                  </select>
+                  <button 
+                    className="test-sound-btn" 
+                    onClick={() => playTypingSound(keyConfig[selectedKey]?.sound || switchType, keyConfig[selectedKey]?.synth)}
+                    title="Test Acoustic Profile"
+                  >
+                    🔊 Test
+                  </button>
+                </div>
               </div>
 
               {keyConfig[selectedKey]?.sound === 'custom' && (
@@ -1033,7 +1048,11 @@ function App() {
                     <input 
                       type="range" min="100" max="2000" step="10" 
                       value={keyConfig[selectedKey]?.synth?.freq || 400} 
-                      onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { pitchVarMultiplier: 1, gainMultiplier: 1, q: 1.2 }), freq: parseFloat(e.target.value) } } }))}
+                      onChange={(e) => {
+                        const val = parseFloat(e.target.value);
+                        setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { pitchVarMultiplier: 1, gainMultiplier: 1, q: 1.2 }), freq: val } } }));
+                        playTypingSound('custom', { ...(keyConfig[selectedKey]?.synth || { pitchVarMultiplier: 1, gainMultiplier: 1, q: 1.2 }), freq: val });
+                      }}
                     />
                   </div>
                   <div className="builder-row">
@@ -1041,7 +1060,11 @@ function App() {
                     <input 
                       type="range" min="0.5" max="2.0" step="0.1" 
                       value={keyConfig[selectedKey]?.synth?.pitchVarMultiplier || 1.0} 
-                      onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { freq: 400, gainMultiplier: 1, q: 1.2 }), pitchVarMultiplier: parseFloat(e.target.value) } } }))}
+                      onChange={(e) => {
+                        const val = parseFloat(e.target.value);
+                        setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { freq: 400, gainMultiplier: 1, q: 1.2 }), pitchVarMultiplier: val } } }));
+                        playTypingSound('custom', { ...(keyConfig[selectedKey]?.synth || { freq: 400, gainMultiplier: 1, q: 1.2 }), pitchVarMultiplier: val });
+                      }}
                     />
                   </div>
                   <div className="builder-row">
@@ -1049,7 +1072,11 @@ function App() {
                     <input 
                       type="range" min="0.1" max="3.0" step="0.1" 
                       value={keyConfig[selectedKey]?.synth?.gainMultiplier || 1.0} 
-                      onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { freq: 400, pitchVarMultiplier: 1, q: 1.2 }), gainMultiplier: parseFloat(e.target.value) } } }))}
+                      onChange={(e) => {
+                        const val = parseFloat(e.target.value);
+                        setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { freq: 400, pitchVarMultiplier: 1, q: 1.2 }), gainMultiplier: val } } }));
+                        playTypingSound('custom', { ...(keyConfig[selectedKey]?.synth || { freq: 400, pitchVarMultiplier: 1, q: 1.2 }), gainMultiplier: val });
+                      }}
                     />
                   </div>
                   <div className="builder-row">
@@ -1057,21 +1084,23 @@ function App() {
                     <input 
                       type="range" min="0.1" max="5.0" step="0.1" 
                       value={keyConfig[selectedKey]?.synth?.q || 1.2} 
-                      onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { freq: 400, pitchVarMultiplier: 1, gainMultiplier: 1 }), q: parseFloat(e.target.value) } } }))}
+                      onChange={(e) => {
+                        const val = parseFloat(e.target.value);
+                        setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { freq: 400, pitchVarMultiplier: 1, gainMultiplier: 1 }), q: val } } }));
+                        playTypingSound('custom', { ...(keyConfig[selectedKey]?.synth || { freq: 400, pitchVarMultiplier: 1, gainMultiplier: 1 }), q: val });
+                      }}
                     />
                   </div>
                 </div>
               )}
             </div>
             
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
-              <button 
-                className="save-close-btn" 
-                onClick={() => setSelectedKey(null)}
-              >
-                💾 Save & Close
-              </button>
-            </div>
+            <button 
+              className="save-close-btn" 
+              onClick={() => setSelectedKey(null)}
+            >
+              💾 Save & Close
+            </button>
           </div>
         )}
 
