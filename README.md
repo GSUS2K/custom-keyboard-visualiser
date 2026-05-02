@@ -2,6 +2,9 @@
 
 A web-based tool built with React that visualizes mechanical keyboard layouts and simulates the acoustics of different mechanical switches.
 
+## Live Demo
+
+**[View the visualizer here](https://GSUS2K.github.io/custom-keyboard-visualiser/)**
 ## Features
 
 - Dynamic layouts: Currently supports 60%, 75%, and 80% (TKL) layouts using an accurate CSS Grid span system.
