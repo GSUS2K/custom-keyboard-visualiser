@@ -825,12 +825,12 @@ function App() {
           <div className={`typeracer-container ${gameFinished ? 'finished' : ''}`}>
             <div className="typeracer-header">
               <div className="game-modes">
-                <button className={wordCountTarget === 10 ? 'active' : ''} onClick={() => startNewGame(10)}>10</button>
-                <button className={wordCountTarget === 20 ? 'active' : ''} onClick={() => startNewGame(20)}>20</button>
-                <button className={wordCountTarget === 50 ? 'active' : ''} onClick={() => startNewGame(50)}>50</button>
-                <button className={wordCountTarget === 100 ? 'active' : ''} onClick={() => startNewGame(100)}>100</button>
+                <button className={wordCountTarget === 10 ? 'active' : ''} onClick={(e) => { startNewGame(10); e.currentTarget.blur(); }}>10</button>
+                <button className={wordCountTarget === 20 ? 'active' : ''} onClick={(e) => { startNewGame(20); e.currentTarget.blur(); }}>20</button>
+                <button className={wordCountTarget === 50 ? 'active' : ''} onClick={(e) => { startNewGame(50); e.currentTarget.blur(); }}>50</button>
+                <button className={wordCountTarget === 100 ? 'active' : ''} onClick={(e) => { startNewGame(100); e.currentTarget.blur(); }}>100</button>
               </div>
-              <button className="restart-btn" onClick={() => startNewGame()} title="Restart Test">↻</button>
+              <button className="restart-btn" onClick={(e) => { startNewGame(); e.currentTarget.blur(); }} title="Restart Test">↻</button>
             </div>
             
             <div className="typeracer-viewport">
@@ -849,7 +849,7 @@ function App() {
           <div className="sandbox-container">
             <div className="sandbox-header">
               <div className="sandbox-title">📝 Freeplay Sandbox</div>
-              <button className="restart-btn" onClick={() => { setSandboxText(''); setGameActive(false); setWpm(0); setCpm(0); setTimeElapsed(0); startTime.current = null; }} title="Clear Text">↻ Clear</button>
+              <button className="restart-btn" onClick={(e) => { setSandboxText(''); setGameActive(false); setWpm(0); setCpm(0); setTimeElapsed(0); startTime.current = null; e.currentTarget.blur(); }} title="Clear Text">↻ Clear</button>
             </div>
             <div className="sandbox-viewport">
               <div className="sandbox-text">
@@ -891,24 +891,24 @@ function App() {
         <div className="control-group">
           <label>Global Features</label>
           <div className="game-modes toggle-grid" style={{ width: '100%', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '8px' }}>
-            <button style={{flex: '1 1 40%'}} className={soundEnabled ? 'active' : ''} onClick={() => setSoundEnabled(!soundEnabled)}>🔊 Sound</button>
-            <button style={{flex: '1 1 40%'}} className={particlesEnabled ? 'active' : ''} onClick={() => setParticlesEnabled(!particlesEnabled)}>✨ Particles</button>
-            <button style={{flex: '1 1 40%'}} className={showKeycaps ? 'active' : ''} onClick={() => setShowKeycaps(!showKeycaps)}>⌨️ Keycaps</button>
-            <button style={{flex: '1 1 40%'}} className={viewAngle === '3d' ? 'active' : ''} onClick={() => setViewAngle(viewAngle === '3d' ? 'flat' : '3d')}>📐 3D View</button>
+            <button style={{flex: '1 1 40%'}} className={soundEnabled ? 'active' : ''} onClick={(e) => { setSoundEnabled(!soundEnabled); e.currentTarget.blur(); }}>🔊 Sound</button>
+            <button style={{flex: '1 1 40%'}} className={particlesEnabled ? 'active' : ''} onClick={(e) => { setParticlesEnabled(!particlesEnabled); e.currentTarget.blur(); }}>✨ Particles</button>
+            <button style={{flex: '1 1 40%'}} className={showKeycaps ? 'active' : ''} onClick={(e) => { setShowKeycaps(!showKeycaps); e.currentTarget.blur(); }}>⌨️ Keycaps</button>
+            <button style={{flex: '1 1 40%'}} className={viewAngle === '3d' ? 'active' : ''} onClick={(e) => { setViewAngle(viewAngle === '3d' ? 'flat' : '3d'); e.currentTarget.blur(); }}>📐 3D View</button>
           </div>
         </div>
 
         <div className="control-group">
           <label>Operation Mode</label>
           <div className="game-modes" style={{ width: '100%', marginBottom: '0.5rem' }}>
-            <button style={{flex: 1}} className={operationMode === 'race' ? 'active' : ''} onClick={() => setOperationMode('race')}>🏁 Race</button>
-            <button style={{flex: 1}} className={operationMode === 'sandbox' ? 'active' : ''} onClick={() => setOperationMode('sandbox')}>📝 Sandbox</button>
+            <button style={{flex: 1}} className={operationMode === 'race' ? 'active' : ''} onClick={(e) => { setOperationMode('race'); e.currentTarget.blur(); }}>🏁 Race</button>
+            <button style={{flex: 1}} className={operationMode === 'sandbox' ? 'active' : ''} onClick={(e) => { setOperationMode('sandbox'); e.currentTarget.blur(); }}>📝 Sandbox</button>
           </div>
         </div>
 
         <div className="control-group">
           <label>RGB Lighting</label>
-          <select value={rgbMode} onChange={e => setRgbMode(e.target.value)}>
+          <select value={rgbMode} onChange={e => { setRgbMode(e.target.value); e.target.blur(); }}>
             <option value="theme">Theme Default</option>
             <option value="rainbow">Rainbow Wave</option>
             <option value="breathe">Breathing Pulse</option>
@@ -918,7 +918,7 @@ function App() {
 
         <div className="control-group">
           <label>Real Keyboard Models</label>
-          <select value={preset} onChange={e => setPreset(e.target.value)} style={{ borderColor: 'var(--accent-color)' }}>
+          <select value={preset} onChange={e => { setPreset(e.target.value); e.target.blur(); }} style={{ borderColor: 'var(--accent-color)' }}>
             <option value="custom">-- Custom Build --</option>
             <option value="wooting">Wooting 60HE (Linear)</option>
             <option value="hhkb">HHKB Professional (Topre)</option>
@@ -930,7 +930,7 @@ function App() {
 
         <div className="control-group">
           <label>Layout Size</label>
-          <select value={keyboardType} onChange={e => { setKeyboardType(e.target.value); setPreset('custom'); }}>
+          <select value={keyboardType} onChange={e => { setKeyboardType(e.target.value); setPreset('custom'); e.target.blur(); }}>
             <option value="40">40% (Planck Ortho)</option>
             <option value="60">60% (Standard)</option>
             <option value="65">65% (Tofu65 Style)</option>
@@ -939,7 +939,7 @@ function App() {
         </div>
         <div className="control-group">
           <label>Switch Acoustic Profile</label>
-          <select value={switchType} onChange={e => { setSwitchType(e.target.value); setPreset('custom'); }}>
+          <select value={switchType} onChange={e => { setSwitchType(e.target.value); setPreset('custom'); e.target.blur(); }}>
             <option value="linear">Gateron Milky Yellow (Deep Creamy Thock)</option>
             <option value="tactile">Holy Panda (Sharp Clack + Bump)</option>
             <option value="clicky">Cherry MX Blue (High-Pitch Click Jacket)</option>
@@ -950,7 +950,7 @@ function App() {
         </div>
         <div className="control-group">
           <label>Keycap Profile</label>
-          <select value={profile} onChange={e => { setProfile(e.target.value); setPreset('custom'); }}>
+          <select value={profile} onChange={e => { setProfile(e.target.value); setPreset('custom'); e.target.blur(); }}>
             <option value="cherry">Cherry (Sculpted)</option>
             <option value="xda">XDA (Flat, Square)</option>
             <option value="sa">SA (Tall, Spherical)</option>
@@ -958,7 +958,7 @@ function App() {
         </div>
         <div className="control-group">
           <label>Color Theme</label>
-          <select value={theme} onChange={e => { setTheme(e.target.value); setPreset('custom'); }}>
+          <select value={theme} onChange={e => { setTheme(e.target.value); setPreset('custom'); e.target.blur(); }}>
             <option value="default">Dark Glass</option>
             <option value="retro">Retro Beige 1984</option>
             <option value="cyberpunk">Cyberpunk Neon</option>
