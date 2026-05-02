@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef, createContext, useContext } from 'react';
+import { RotateCcw, Volume2, Save, X, Trash2, Eye, EyeOff, Download, Upload, Edit3, Settings, Sparkles, Keyboard as KeyboardIcon, Box, Flag, Wrench } from 'lucide-react';
 import './index.css';
 
 export const KeyboardConfigContext = createContext<{ buildMode: boolean, config: Record<string, { bg?: string, text?: string, sound?: string, label?: string, span?: number, hidden?: boolean, synth?: { freq: number, pitchVarMultiplier: number, gainMultiplier: number, q: number } }> }>({ buildMode: false, config: {} });
@@ -947,7 +948,7 @@ function App() {
                 <button className={wordCountTarget === 50 ? 'active' : ''} onClick={(e) => { startNewGame(50); e.currentTarget.blur(); }}>50</button>
                 <button className={wordCountTarget === 100 ? 'active' : ''} onClick={(e) => { startNewGame(100); e.currentTarget.blur(); }}>100</button>
               </div>
-              <button className="restart-btn" onClick={(e) => { startNewGame(); e.currentTarget.blur(); }} title="Restart Test">↻</button>
+              <button className="restart-btn" onClick={(e) => { startNewGame(); e.currentTarget.blur(); }} title="Restart Test"><RotateCcw size={16} /></button>
             </div>
             
             <div className="typeracer-viewport">
@@ -965,8 +966,12 @@ function App() {
         ) : (
           <div className="sandbox-container">
             <div className="sandbox-header">
-              <div className="sandbox-title">📝 Freeplay Sandbox</div>
-              <button className="restart-btn" onClick={(e) => { setSandboxText(''); setGameActive(false); setWpm(0); setCpm(0); setTimeElapsed(0); startTime.current = null; e.currentTarget.blur(); }} title="Clear Text">↻ Clear</button>
+              <div className="sandbox-title" style={{ display: 'flex', alignItems: 'center' }}>
+                <Edit3 size={18} style={{ marginRight: '8px' }} /> Freeplay Sandbox
+              </div>
+              <button className="restart-btn" style={{ display: 'flex', alignItems: 'center', gap: '6px' }} onClick={(e) => { setSandboxText(''); setGameActive(false); setWpm(0); setCpm(0); setTimeElapsed(0); startTime.current = null; e.currentTarget.blur(); }} title="Clear Text">
+                <RotateCcw size={14} /> Clear
+              </button>
             </div>
             <div className="sandbox-viewport">
               <div className="sandbox-text">
@@ -981,7 +986,7 @@ function App() {
           <div className="key-builder-modal">
             <div className="modal-header">
               <h3>Editing: {selectedKey.replace('Key', '').replace('Digit', '')}</h3>
-              <button className="close-btn" onClick={() => setSelectedKey(null)}>✕</button>
+              <button className="close-btn" onClick={() => setSelectedKey(null)}><X size={20} /></button>
             </div>
             
             <div className="modal-body">
@@ -1013,7 +1018,7 @@ function App() {
                   className={`visibility-btn ${keyConfig[selectedKey]?.hidden ? 'hidden-active' : ''}`}
                   onClick={() => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], hidden: !prev[selectedKey]?.hidden } }))}
                 >
-                  {keyConfig[selectedKey]?.hidden ? '🚫 Hidden' : '👁️ Visible'}
+                  {keyConfig[selectedKey]?.hidden ? <><EyeOff size={16} /> Hidden</> : <><Eye size={16} /> Visible</>}
                 </button>
               </div>
 
@@ -1025,7 +1030,7 @@ function App() {
                     value={keyConfig[selectedKey]?.bg || '#ffffff'} 
                     onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], bg: e.target.value } }))}
                   />
-                  <button className="clear-color-btn" title="Reset Color" onClick={() => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], bg: undefined } }))}>↺</button>
+                  <button className="clear-color-btn" title="Reset Color" onClick={() => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], bg: undefined } }))}><RotateCcw size={14} /></button>
                 </div>
               </div>
 
@@ -1037,7 +1042,7 @@ function App() {
                     value={keyConfig[selectedKey]?.text || '#000000'} 
                     onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], text: e.target.value } }))}
                   />
-                  <button className="clear-color-btn" title="Reset Color" onClick={() => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], text: undefined } }))}>↺</button>
+                  <button className="clear-color-btn" title="Reset Color" onClick={() => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], text: undefined } }))}><RotateCcw size={14} /></button>
                 </div>
               </div>
 
@@ -1055,14 +1060,14 @@ function App() {
                     <option value="topre">Deep Topre</option>
                     <option value="silent">Silent Linear</option>
                     <option value="heavy_tactile">Massive Bump</option>
-                    <option value="custom">🛠️ Custom Synth</option>
+                    <option value="custom">Custom Synth</option>
                   </select>
                   <button 
                     className="test-sound-btn" 
                     onClick={() => playTypingSound(keyConfig[selectedKey]?.sound || switchType, keyConfig[selectedKey]?.synth)}
                     title="Test Acoustic Profile"
                   >
-                    🔊 Test
+                    <Volume2 size={16} /> Test
                   </button>
                 </div>
               </div>
@@ -1126,13 +1131,14 @@ function App() {
                 className="reset-key-btn" 
                 onClick={() => setKeyConfig(prev => { const next = {...prev}; delete next[selectedKey]; return next; })}
               >
-                🗑️ Reset Key
+                <Trash2 size={16} /> Reset Key
               </button>
               <button 
                 className="save-close-btn" 
                 onClick={() => setSelectedKey(null)}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
               >
-                💾 Save & Close
+                <Save size={18} /> Save & Close
               </button>
             </div>
           </div>
@@ -1159,31 +1165,31 @@ function App() {
         onClick={(e) => { setShowSettings(!showSettings); e.currentTarget.blur(); }}
         title="Toggle Studio Settings"
       >
-        ⚙️
+        <Settings size={24} />
       </button>
 
       <div className={`sidebar controls-wrapper ${showSettings ? '' : 'hidden'}`}>
         <div className="sidebar-header">
           <h2>Studio Settings</h2>
-          <button className="close-btn" onClick={(e) => { setShowSettings(false); e.currentTarget.blur(); }}>✕</button>
+          <button className="close-btn" onClick={(e) => { setShowSettings(false); e.currentTarget.blur(); }}><X size={20} /></button>
         </div>
         
         <div className="control-group">
           <label>Global Features</label>
           <div className="game-modes toggle-grid" style={{ width: '100%', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '8px' }}>
-            <button style={{flex: '1 1 40%'}} className={soundEnabled ? 'active' : ''} onClick={(e) => { setSoundEnabled(!soundEnabled); e.currentTarget.blur(); }}>🔊 Sound</button>
-            <button style={{flex: '1 1 40%'}} className={particlesEnabled ? 'active' : ''} onClick={(e) => { setParticlesEnabled(!particlesEnabled); e.currentTarget.blur(); }}>✨ Particles</button>
-            <button style={{flex: '1 1 40%'}} className={showKeycaps ? 'active' : ''} onClick={(e) => { setShowKeycaps(!showKeycaps); e.currentTarget.blur(); }}>⌨️ Keycaps</button>
-            <button style={{flex: '1 1 40%'}} className={viewAngle === '3d' ? 'active' : ''} onClick={(e) => { setViewAngle(viewAngle === '3d' ? 'flat' : '3d'); e.currentTarget.blur(); }}>📐 3D View</button>
-            <button style={{flex: '1 1 100%'}} className={`build-mode-btn ${buildMode ? 'active' : ''}`} onClick={(e) => { setBuildMode(!buildMode); setSelectedKey(null); e.currentTarget.blur(); }}>🛠️ Key Builder Mode</button>
+            <button style={{flex: '1 1 40%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'}} className={soundEnabled ? 'active' : ''} onClick={(e) => { setSoundEnabled(!soundEnabled); e.currentTarget.blur(); }}><Volume2 size={16} /> Sound</button>
+            <button style={{flex: '1 1 40%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'}} className={particlesEnabled ? 'active' : ''} onClick={(e) => { setParticlesEnabled(!particlesEnabled); e.currentTarget.blur(); }}><Sparkles size={16} /> Particles</button>
+            <button style={{flex: '1 1 40%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'}} className={showKeycaps ? 'active' : ''} onClick={(e) => { setShowKeycaps(!showKeycaps); e.currentTarget.blur(); }}><KeyboardIcon size={16} /> Keycaps</button>
+            <button style={{flex: '1 1 40%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'}} className={viewAngle === '3d' ? 'active' : ''} onClick={(e) => { setViewAngle(viewAngle === '3d' ? 'flat' : '3d'); e.currentTarget.blur(); }}><Box size={16} /> 3D View</button>
+            <button style={{flex: '1 1 100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'}} className={`build-mode-btn ${buildMode ? 'active' : ''}`} onClick={(e) => { setBuildMode(!buildMode); setSelectedKey(null); e.currentTarget.blur(); }}><Wrench size={16} /> Key Builder Mode</button>
           </div>
         </div>
 
         <div className="control-group">
           <label>Operation Mode</label>
           <div className="game-modes" style={{ width: '100%', marginBottom: '0.5rem' }}>
-            <button style={{flex: 1}} className={operationMode === 'race' ? 'active' : ''} onClick={(e) => { setOperationMode('race'); e.currentTarget.blur(); }}>🏁 Race</button>
-            <button style={{flex: 1}} className={operationMode === 'sandbox' ? 'active' : ''} onClick={(e) => { setOperationMode('sandbox'); e.currentTarget.blur(); }}>📝 Sandbox</button>
+            <button style={{flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'}} className={operationMode === 'race' ? 'active' : ''} onClick={(e) => { setOperationMode('race'); e.currentTarget.blur(); }}><Flag size={16} /> Race</button>
+            <button style={{flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'}} className={operationMode === 'sandbox' ? 'active' : ''} onClick={(e) => { setOperationMode('sandbox'); e.currentTarget.blur(); }}><Edit3 size={16} /> Sandbox</button>
           </div>
         </div>
 
@@ -1252,9 +1258,11 @@ function App() {
         <div className="control-group">
           <label>Data Management</label>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', width: '100%' }}>
-            <button className="data-mgt-btn" onClick={handleExportProfile}>📤 Export Profile</button>
+            <button className="data-mgt-btn" onClick={handleExportProfile}>
+              <Download size={18} /> Export Profile
+            </button>
             <button className="data-mgt-btn" style={{ position: 'relative' }}>
-              📥 Import Profile
+              <Upload size={18} /> Import Profile
               <input type="file" accept=".json" onChange={handleImportProfile} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }} />
             </button>
           </div>
