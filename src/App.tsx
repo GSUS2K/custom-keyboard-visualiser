@@ -876,7 +876,7 @@ function App() {
 
       <button 
         className={`settings-toggle-btn ${showSettings ? 'open' : ''}`} 
-        onClick={() => setShowSettings(!showSettings)}
+        onClick={(e) => { setShowSettings(!showSettings); e.currentTarget.blur(); }}
         title="Toggle Studio Settings"
       >
         ⚙️
@@ -885,7 +885,7 @@ function App() {
       <div className={`sidebar controls-wrapper ${showSettings ? '' : 'hidden'}`}>
         <div className="sidebar-header">
           <h2>Studio Settings</h2>
-          <button className="close-btn" onClick={() => setShowSettings(false)}>✕</button>
+          <button className="close-btn" onClick={(e) => { setShowSettings(false); e.currentTarget.blur(); }}>✕</button>
         </div>
         
         <div className="control-group">
