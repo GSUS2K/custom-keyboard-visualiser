@@ -489,23 +489,36 @@ function App() {
   const [wordCountTarget, setWordCountTarget] = useState(20);
   const [quote, setQuote] = useState(generateQuote(20));
   const [typed, setTyped] = useState('');
+  const typedRef = useRef('');
   const [gameActive, setGameActive] = useState(false);
   const [gameFinished, setGameFinished] = useState(false);
   const startTime = useRef<number | null>(null);
+  const [timeElapsed, setTimeElapsed] = useState(0);
   
   // Stats
   const [wpm, setWpm] = useState(0);
+  const [cpm, setCpm] = useState(0);
   const [accuracy, setAccuracy] = useState(100);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // UI
+  const [showSettings, setShowSettings] = useState(true);
+
+  useEffect(() => {
+    typedRef.current = typed;
+  }, [typed]);
 
   const startNewGame = useCallback((targetWords: number = wordCountTarget) => {
     setWordCountTarget(targetWords);
     setQuote(generateQuote(targetWords));
     setTyped('');
+    typedRef.current = '';
     setGameActive(false);
     setGameFinished(false);
     setWpm(0);
+    setCpm(0);
     setAccuracy(100);
+    setTimeElapsed(0);
     startTime.current = null;
   }, [wordCountTarget]);
 
@@ -548,6 +561,22 @@ function App() {
         // Prevent typing beyond the length of the quote
         if (prev.length < quote.length) {
           nextTyped = prev + e.key;
+        }
+      }
+
+      // Update instantaneous accuracy
+      let correct = 0;
+      for (let i = 0; i < nextTyped.length; i++) {
+        if (nextTyped[i] === quote[i]) correct++;
+      }
+      setAccuracy(nextTyped.length > 0 ? Math.round((correct / nextTyped.length) * 100) : 100);
+
+      // Instant WPM/CPM Update
+      if (startTime.current) {
+        const elapsedMinutes = (Date.now() - startTime.current) / 60000;
+        if (elapsedMinutes > 0) {
+          setCpm(Math.round(nextTyped.length / elapsedMinutes));
+          setWpm(Math.round((nextTyped.length / 5) / elapsedMinutes));
         }
       }
 
@@ -599,23 +628,23 @@ function App() {
 
   useEffect(() => {
     let interval: any;
-    if (gameActive && startTime.current) {
+    if (gameActive) {
       interval = setInterval(() => {
-        const elapsedMinutes = (Date.now() - startTime.current!) / 60000;
+        if (!startTime.current) return;
+        const elapsedSeconds = (Date.now() - startTime.current) / 1000;
+        setTimeElapsed(Math.floor(elapsedSeconds));
+        
+        const elapsedMinutes = elapsedSeconds / 60;
         if (elapsedMinutes > 0) {
-          const currentWpm = Math.round((typed.length / 5) / elapsedMinutes);
+          const currentCpm = Math.round(typedRef.current.length / elapsedMinutes);
+          const currentWpm = Math.round((typedRef.current.length / 5) / elapsedMinutes);
+          setCpm(currentCpm);
           setWpm(currentWpm);
-          
-          let correct = 0;
-          for (let i = 0; i < typed.length; i++) {
-            if (typed[i] === quote[i]) correct++;
-          }
-          setAccuracy(typed.length > 0 ? Math.round((correct / typed.length) * 100) : 100);
         }
-      }, 500);
+      }, 200); // 5 times a second for smooth timer and wpm drop
     }
     return () => clearInterval(interval);
-  }, [gameActive, typed, quote]);
+  }, [gameActive]);
 
   useEffect(() => {
     let animationId: number;
@@ -643,8 +672,16 @@ function App() {
       let x = 0;
 
       for (let i = 0; i < bufferLength; i++) {
-        const v = dataArray[i] / 128.0;
-        const y = v * canvas.height / 2;
+        // Center around 128, multiply amplitude by 4x for dramatic visual
+        let v = dataArray[i];
+        v = ((v - 128) * 4) + 128;
+        // Clamp to 0-255
+        if (v < 0) v = 0;
+        if (v > 255) v = 255;
+        
+        const normalizedV = v / 128.0;
+        const y = normalizedV * canvas.height / 2;
+        
         if (i === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
         x += sliceWidth;
@@ -697,12 +734,20 @@ function App() {
 
         <div className="dashboard">
           <div className="stat-box">
+            <span className="stat-value">{timeElapsed}s</span>
+            <span className="stat-label">Time</span>
+          </div>
+          <div className="stat-box">
             <span className="stat-value">{wpm}</span>
             <span className="stat-label">WPM</span>
           </div>
           <div className="stat-box visualizer-box">
             <canvas ref={canvasRef} width="200" height="40" className="visualizer"></canvas>
             <span className="stat-label">Acoustic Waveform</span>
+          </div>
+          <div className="stat-box">
+            <span className="stat-value">{cpm}</span>
+            <span className="stat-label">CPM</span>
           </div>
           <div className="stat-box">
             <span className="stat-value">{accuracy}%</span>
@@ -748,9 +793,18 @@ function App() {
         </div>
       </div>
 
-      <div className="sidebar controls-wrapper">
+      <button 
+        className={`settings-toggle-btn ${showSettings ? 'open' : ''}`} 
+        onClick={() => setShowSettings(!showSettings)}
+        title="Toggle Studio Settings"
+      >
+        ⚙️
+      </button>
+
+      <div className={`sidebar controls-wrapper ${showSettings ? '' : 'hidden'}`}>
         <div className="sidebar-header">
           <h2>Studio Settings</h2>
+          <button className="close-btn" onClick={() => setShowSettings(false)}>✕</button>
         </div>
         <div className="control-group">
           <label>Real Keyboard Models</label>

@@ -369,6 +369,36 @@ body {
   display: block;
 }
 
+.settings-toggle-btn {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 100;
+  box-shadow: var(--panel-shadow);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.settings-toggle-btn:hover {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 20px rgba(252, 163, 17, 0.2);
+}
+
+.settings-toggle-btn.open {
+  opacity: 0;
+  pointer-events: none;
+  transform: rotate(90deg) scale(0.5);
+}
+
 .sidebar {
   display: flex;
   flex-direction: column;
@@ -382,12 +412,23 @@ body {
   -webkit-backdrop-filter: blur(12px);
   width: 320px;
   flex-shrink: 0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(50px) scale(0.95);
+  margin-right: -350px; /* Fully remove from flex layout */
 }
 
 .sidebar-header {
   margin-bottom: 0.5rem;
   border-bottom: 1px solid var(--panel-border);
   padding-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .sidebar-header h2 {
@@ -396,6 +437,21 @@ body {
   color: var(--page-text-highlight);
   text-transform: uppercase;
   letter-spacing: 0.1em;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: var(--page-text);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 0.5rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.close-btn:hover {
+  color: var(--accent-color);
+  transform: scale(1.1);
 }
 
 .control-divider {
