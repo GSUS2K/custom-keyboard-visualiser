@@ -153,14 +153,7 @@ const playTypingSound = (switchType: string) => {
   }
 };
 
-const PRESETS: Record<string, { layout: string, switch: string, profile: string, theme: string }> = {
-  custom: { layout: '65', switch: 'linear', profile: 'cherry', theme: 'default' },
-  wooting: { layout: '60', switch: 'linear', profile: 'cherry', theme: 'default' },
-  hhkb: { layout: '60', switch: 'topre', profile: 'cherry', theme: 'retro' },
-  keychron_q1: { layout: '75', switch: 'tactile', profile: 'cherry', theme: 'default' },
-  cyberboard: { layout: '75', switch: 'heavy_tactile', profile: 'xda', theme: 'cyberpunk' },
-  planck: { layout: '40', switch: 'clicky', profile: 'xda', theme: 'vaporwave' },
-};
+
 
 const Key = ({ label, subLabel, span = 4, className = '', keyCode, activeKeys, onManualPress }: any) => {
   const isPressed = activeKeys.has(keyCode);
