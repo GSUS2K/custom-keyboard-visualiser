@@ -508,6 +508,11 @@ function App() {
   // UI
   const [showSettings, setShowSettings] = useState(true);
   const [rgbMode, setRgbMode] = useState('theme');
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [showKeycaps, setShowKeycaps] = useState(true);
+  const [viewAngle, setViewAngle] = useState<'3d' | 'flat'>('3d');
+  const [particlesEnabled, setParticlesEnabled] = useState(true);
+  const [particles, setParticles] = useState<{id: number, char: string, x: number}[]>([]);
 
   useEffect(() => {
     typedRef.current = operationMode === 'race' ? typed : sandboxText;
@@ -529,8 +534,6 @@ function App() {
   }, [wordCountTarget]);
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.repeat) return;
-    
     // Quick restart shortcut
     if (gameFinished && e.key === 'Enter') {
       startNewGame();
@@ -542,8 +545,22 @@ function App() {
       return;
     }
 
-    playTypingSound(switchType);
+    if (soundEnabled) {
+      playTypingSound(switchType);
+    }
     
+    if (particlesEnabled && e.key.length === 1) {
+      const newParticle = { id: Date.now() + Math.random(), char: e.key, x: Math.random() * 80 + 10 }; // 10% to 90%
+      setParticles(prev => {
+        const next = [...prev, newParticle];
+        if (next.length > 20) return next.slice(next.length - 20);
+        return next;
+      });
+      setTimeout(() => {
+        setParticles(prev => prev.filter(p => p.id !== newParticle.id));
+      }, 1000);
+    }
+
     setActiveKeys(prev => {
       const next = new Set(prev);
       next.add(e.code);
@@ -656,8 +673,8 @@ function App() {
   }, [preset]);
 
   useEffect(() => {
-    document.body.className = `theme-${theme} rgb-${rgbMode}`;
-  }, [theme, rgbMode]);
+    document.body.className = `theme-${theme} rgb-${rgbMode} ${!showKeycaps ? 'hide-keycaps' : ''}`;
+  }, [theme, rgbMode, showKeycaps]);
 
   useEffect(() => {
     let interval: any;
@@ -728,14 +745,19 @@ function App() {
   }, [theme]);
 
   const handleManualPress = (code: string) => {
-    playTypingSound(switchType);
-    setActiveKeys(prev => new Set(prev).add(code));
+    const charMap: Record<string, string> = { Space: ' ', Enter: 'Enter', Backspace: 'Backspace' };
+    let key = charMap[code];
+    
+    if (!key) {
+      if (code.startsWith('Key')) key = code.replace('Key', '').toLowerCase();
+      else if (code.startsWith('Digit')) key = code.replace('Digit', '');
+      else key = code; // Fallback
+    }
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key, code, bubbles: true }));
+    
     setTimeout(() => {
-      setActiveKeys(prev => {
-        const next = new Set(prev);
-        next.delete(code);
-        return next;
-      });
+      window.dispatchEvent(new KeyboardEvent('keyup', { key, code, bubbles: true }));
     }, 100);
   };
 
@@ -757,6 +779,11 @@ function App() {
 
   return (
     <div className={`app-container profile-${profile}`}>
+      {particles.map(p => (
+        <div key={p.id} className="typing-particle" style={{ left: `${p.x}vw` }}>
+          {p.char}
+        </div>
+      ))}
       <div className="main-column">
         <div className="header">
           <div className="title">
@@ -827,7 +854,7 @@ function App() {
           </div>
         )}
         
-        <div className="keyboard-chassis">
+        <div className={`keyboard-chassis ${viewAngle === 'flat' ? 'flat-view' : ''}`}>
           <div className="status-leds">
             <div className={`led ${activeKeys.has('CapsLock') ? 'active' : ''}`} title="Caps Lock"></div>
             {keyboardType !== '40' && <div className="led active" title="Battery"></div>}
@@ -854,6 +881,17 @@ function App() {
           <h2>Studio Settings</h2>
           <button className="close-btn" onClick={() => setShowSettings(false)}>✕</button>
         </div>
+        
+        <div className="control-group">
+          <label>Global Features</label>
+          <div className="game-modes toggle-grid" style={{ width: '100%', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '8px' }}>
+            <button style={{flex: '1 1 40%'}} className={soundEnabled ? 'active' : ''} onClick={() => setSoundEnabled(!soundEnabled)}>🔊 Sound</button>
+            <button style={{flex: '1 1 40%'}} className={particlesEnabled ? 'active' : ''} onClick={() => setParticlesEnabled(!particlesEnabled)}>✨ Particles</button>
+            <button style={{flex: '1 1 40%'}} className={showKeycaps ? 'active' : ''} onClick={() => setShowKeycaps(!showKeycaps)}>⌨️ Keycaps</button>
+            <button style={{flex: '1 1 40%'}} className={viewAngle === '3d' ? 'active' : ''} onClick={() => setViewAngle(viewAngle === '3d' ? 'flat' : '3d')}>📐 3D View</button>
+          </div>
+        </div>
+
         <div className="control-group">
           <label>Operation Mode</label>
           <div className="game-modes" style={{ width: '100%', marginBottom: '0.5rem' }}>
