@@ -493,6 +493,7 @@ function App() {
   const [gameActive, setGameActive] = useState(false);
   const [gameFinished, setGameFinished] = useState(false);
   const startTime = useRef<number | null>(null);
+  const reactiveHueRef = useRef(0);
   const [timeElapsed, setTimeElapsed] = useState(0);
   
   // Operation Mode
@@ -559,6 +560,18 @@ function App() {
       setTimeout(() => {
         setParticles(prev => prev.filter(p => p.id !== newParticle.id));
       }, 1000);
+    }
+    
+    if (rgbMode === 'reactive') {
+      reactiveHueRef.current = (reactiveHueRef.current + 35) % 360;
+      document.documentElement.style.setProperty('--reactive-hue', `${reactiveHueRef.current}deg`);
+      
+      const chassis = document.querySelector('.keyboard-chassis');
+      if (chassis) {
+        chassis.classList.remove('reactive-flash');
+        void (chassis as HTMLElement).offsetWidth; // trigger reflow
+        chassis.classList.add('reactive-flash');
+      }
     }
 
     setActiveKeys(prev => {
@@ -639,7 +652,7 @@ function App() {
       return nextTyped;
     });
 
-  }, [switchType, gameActive, gameFinished, quote, startNewGame]);
+  }, [switchType, gameActive, gameFinished, quote, startNewGame, soundEnabled, particlesEnabled, operationMode, rgbMode]);
 
   const handleKeyUp = useCallback((e: KeyboardEvent) => {
     setActiveKeys(prev => {
@@ -906,6 +919,7 @@ function App() {
             <option value="theme">Theme Default</option>
             <option value="rainbow">Rainbow Wave</option>
             <option value="breathe">Breathing Pulse</option>
+            <option value="reactive">Reactive Typing</option>
           </select>
         </div>
 
