@@ -483,7 +483,7 @@ function App() {
   const [switchType, setSwitchType] = useState('linear');
   const [theme, setTheme] = useState('default');
   const [profile, setProfile] = useState('cherry');
-  const [preset, setPreset] = useState('custom');
+  const [preset, setPreset] = useState('keychron_q1');
 
   // TypeRacer Game State
   const [wordCountTarget, setWordCountTarget] = useState(20);
@@ -687,10 +687,12 @@ function App() {
 
   return (
     <div className={`app-container profile-${profile}`}>
-      <div className="header">
-        <div className="title">
-          <h1>Mechanical Keyboard Studio</h1>
-          <p>The ultimate custom acoustic and visual layout simulator</p>
+      <div className="main-column">
+        <div className="header">
+          <div className="title">
+            <h1>Mechanical Keyboard Studio</h1>
+            <p>The ultimate custom acoustic and visual layout simulator</p>
+          </div>
         </div>
 
         <div className="dashboard">
@@ -732,75 +734,76 @@ function App() {
           )}
         </div>
         
-        <div className="controls-wrapper">
-          <div className="control-group">
-            <label>Real Keyboard Models</label>
-            <select value={preset} onChange={e => setPreset(e.target.value)} style={{ borderColor: 'var(--accent-color)' }}>
-              <option value="custom">-- Custom Build --</option>
-              <option value="wooting">Wooting 60HE (Linear)</option>
-              <option value="hhkb">HHKB Professional (Topre)</option>
-              <option value="keychron_q1">Keychron Q1 (Tactile)</option>
-              <option value="cyberboard">Angry Miao Cyberboard (Heavy Tactile)</option>
-              <option value="planck">Planck EZ Ortholinear (Clicky)</option>
-            </select>
+        <div className="keyboard-chassis">
+          <div className="status-leds">
+            <div className={`led ${activeKeys.has('CapsLock') ? 'active' : ''}`} title="Caps Lock"></div>
+            {keyboardType !== '40' && <div className="led active" title="Battery"></div>}
+            {keyboardType !== '40' && <div className="led active" title="Connection"></div>}
           </div>
 
-          <div className="control-divider"></div>
-
-          <div className="control-group">
-            <label>Layout Size</label>
-            <select value={keyboardType} onChange={e => { setKeyboardType(e.target.value); setPreset('custom'); }}>
-              <option value="40">40% (Planck Ortho)</option>
-              <option value="60">60% (Standard)</option>
-              <option value="65">65% (Tofu65 Style)</option>
-              <option value="75">75% (AULA F75 Exploded)</option>
-            </select>
-          </div>
-          <div className="control-group">
-            <label>Switch Acoustic Profile</label>
-            <select value={switchType} onChange={e => { setSwitchType(e.target.value); setPreset('custom'); }}>
-              <option value="linear">Gateron Milky Yellow (Deep Creamy Thock)</option>
-              <option value="tactile">Holy Panda (Sharp Clack + Bump)</option>
-              <option value="clicky">Cherry MX Blue (High-Pitch Click Jacket)</option>
-              <option value="topre">Topre (Deep Electro-capacitive Thwomp)</option>
-              <option value="silent">Silent Alpaca (Muted Linear)</option>
-              <option value="heavy_tactile">Boba U4T (Massive Bump, Thocky)</option>
-            </select>
-          </div>
-          <div className="control-group">
-            <label>Keycap Profile</label>
-            <select value={profile} onChange={e => { setProfile(e.target.value); setPreset('custom'); }}>
-              <option value="cherry">Cherry (Sculpted)</option>
-              <option value="xda">XDA (Flat, Square)</option>
-              <option value="sa">SA (Tall, Spherical)</option>
-            </select>
-          </div>
-          <div className="control-group">
-            <label>Color Theme</label>
-            <select value={theme} onChange={e => { setTheme(e.target.value); setPreset('custom'); }}>
-              <option value="default">Dark Glass</option>
-              <option value="retro">Retro Beige 1984</option>
-              <option value="cyberpunk">Cyberpunk Neon</option>
-              <option value="vaporwave">Vaporwave Synth</option>
-              <option value="matcha">Matcha Green</option>
-              <option value="dracula">Dracula (Dark)</option>
-              <option value="arctic">Arctic Ice (Light)</option>
-            </select>
-          </div>
+          {keyboardType === '40' && <Keyboard40 activeKeys={activeKeys} onManualPress={handleManualPress} />}
+          {keyboardType === '60' && <Keyboard60 activeKeys={activeKeys} onManualPress={handleManualPress} />}
+          {keyboardType === '65' && <Keyboard65 activeKeys={activeKeys} onManualPress={handleManualPress} />}
+          {keyboardType === '75' && <Keyboard75 activeKeys={activeKeys} onManualPress={handleManualPress} />}
         </div>
       </div>
 
-      <div className="keyboard-chassis">
-        <div className="status-leds">
-          <div className={`led ${activeKeys.has('CapsLock') ? 'active' : ''}`} title="Caps Lock"></div>
-          {keyboardType !== '40' && <div className="led active" title="Battery"></div>}
-          {keyboardType !== '40' && <div className="led active" title="Connection"></div>}
+      <div className="sidebar controls-wrapper">
+        <div className="sidebar-header">
+          <h2>Studio Settings</h2>
+        </div>
+        <div className="control-group">
+          <label>Real Keyboard Models</label>
+          <select value={preset} onChange={e => setPreset(e.target.value)} style={{ borderColor: 'var(--accent-color)' }}>
+            <option value="custom">-- Custom Build --</option>
+            <option value="wooting">Wooting 60HE (Linear)</option>
+            <option value="hhkb">HHKB Professional (Topre)</option>
+            <option value="keychron_q1">Keychron Q1 (Tactile)</option>
+            <option value="cyberboard">Angry Miao Cyberboard (Heavy Tactile)</option>
+            <option value="planck">Planck EZ Ortholinear (Clicky)</option>
+          </select>
         </div>
 
-        {keyboardType === '40' && <Keyboard40 activeKeys={activeKeys} onManualPress={handleManualPress} />}
-        {keyboardType === '60' && <Keyboard60 activeKeys={activeKeys} onManualPress={handleManualPress} />}
-        {keyboardType === '65' && <Keyboard65 activeKeys={activeKeys} onManualPress={handleManualPress} />}
-        {keyboardType === '75' && <Keyboard75 activeKeys={activeKeys} onManualPress={handleManualPress} />}
+        <div className="control-group">
+          <label>Layout Size</label>
+          <select value={keyboardType} onChange={e => { setKeyboardType(e.target.value); setPreset('custom'); }}>
+            <option value="40">40% (Planck Ortho)</option>
+            <option value="60">60% (Standard)</option>
+            <option value="65">65% (Tofu65 Style)</option>
+            <option value="75">75% (AULA F75 Exploded)</option>
+          </select>
+        </div>
+        <div className="control-group">
+          <label>Switch Acoustic Profile</label>
+          <select value={switchType} onChange={e => { setSwitchType(e.target.value); setPreset('custom'); }}>
+            <option value="linear">Gateron Milky Yellow (Deep Creamy Thock)</option>
+            <option value="tactile">Holy Panda (Sharp Clack + Bump)</option>
+            <option value="clicky">Cherry MX Blue (High-Pitch Click Jacket)</option>
+            <option value="topre">Topre (Deep Electro-capacitive Thwomp)</option>
+            <option value="silent">Silent Alpaca (Muted Linear)</option>
+            <option value="heavy_tactile">Boba U4T (Massive Bump, Thocky)</option>
+          </select>
+        </div>
+        <div className="control-group">
+          <label>Keycap Profile</label>
+          <select value={profile} onChange={e => { setProfile(e.target.value); setPreset('custom'); }}>
+            <option value="cherry">Cherry (Sculpted)</option>
+            <option value="xda">XDA (Flat, Square)</option>
+            <option value="sa">SA (Tall, Spherical)</option>
+          </select>
+        </div>
+        <div className="control-group">
+          <label>Color Theme</label>
+          <select value={theme} onChange={e => { setTheme(e.target.value); setPreset('custom'); }}>
+            <option value="default">Dark Glass</option>
+            <option value="retro">Retro Beige 1984</option>
+            <option value="cyberpunk">Cyberpunk Neon</option>
+            <option value="vaporwave">Vaporwave Synth</option>
+            <option value="matcha">Matcha Green</option>
+            <option value="dracula">Dracula (Dark)</option>
+            <option value="arctic">Arctic Ice (Light)</option>
+          </select>
+        </div>
       </div>
     </div>
   );
