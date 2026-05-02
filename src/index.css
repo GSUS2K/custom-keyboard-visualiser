@@ -512,8 +512,26 @@ select:hover, select:focus {
   box-shadow: 0 15px 0 rgba(0, 0, 0, 0.5), var(--board-shadow), var(--board-glow);
   position: relative;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  transform: perspective(1200px) rotateX(40deg) rotateZ(-12deg) translateY(-20px) scale(0.85);
+  transform: perspective(1200px) rotateX(40deg) translateY(-20px) scale(0.9);
   transform-style: preserve-3d;
+}
+
+.keyboard-chassis:not(.flat-view) {
+  box-shadow: 
+    0 1px 0 var(--board-border),
+    0 2px 0 var(--board-border),
+    0 3px 0 var(--board-border),
+    0 4px 0 var(--board-border),
+    0 5px 0 var(--board-border),
+    0 6px 0 var(--board-border),
+    0 7px 0 #111,
+    0 8px 0 #111,
+    0 9px 0 #111,
+    0 10px 0 #111,
+    0 12px 0 #050505,
+    0 14px 0 #000,
+    0 35px 30px rgba(0, 0, 0, 0.8),
+    var(--board-glow);
 }
 
 .keyboard-chassis.flat-view {
@@ -570,19 +588,19 @@ select:hover, select:focus {
   letter-spacing: 0.02em;
 }
 
-/* TRUE 3D Isometric Key Depths */
+/* TRUE 3D Perspective Key Depths */
 .keyboard-chassis:not(.flat-view) .key {
   transform: translateZ(12px);
   box-shadow: 
     inset 0 1px 1px var(--key-shadow-top),
-    -1px 1px 0 var(--key-shadow-bottom),
-    -2px 2px 0 var(--key-shadow-bottom),
-    -3px 3px 0 var(--key-shadow-bottom),
-    -4px 4px 0 var(--key-shadow-bottom),
-    -5px 5px 0 var(--key-shadow-bottom),
-    -6px 6px 0 var(--key-shadow-bottom),
-    -7px 7px 0 var(--key-shadow-bottom),
-    -12px 12px 15px rgba(0, 0, 0, 0.5);
+    0 1px 0 var(--key-shadow-bottom),
+    0 2px 0 var(--key-shadow-bottom),
+    0 3px 0 var(--key-shadow-bottom),
+    0 4px 0 var(--key-shadow-bottom),
+    0 5px 0 var(--key-shadow-bottom),
+    0 6px 0 var(--key-shadow-bottom),
+    0 7px 0 var(--key-shadow-bottom),
+    0 15px 15px rgba(0, 0, 0, 0.5);
 }
 
 .keyboard-chassis:not(.flat-view) .key.active, 
@@ -590,33 +608,33 @@ select:hover, select:focus {
   transform: translateZ(4px) translateY(0);
   box-shadow: 
     inset 0 1px 1px var(--key-shadow-top),
-    -1px 1px 0 var(--key-shadow-bottom),
-    -2px 2px 0 var(--key-shadow-bottom),
-    -3px 3px 0 var(--key-shadow-bottom),
-    -6px 6px 8px rgba(0, 0, 0, 0.5);
+    0 1px 0 var(--key-shadow-bottom),
+    0 2px 0 var(--key-shadow-bottom),
+    0 3px 0 var(--key-shadow-bottom),
+    0 8px 10px rgba(0, 0, 0, 0.5);
 }
 
 .keyboard-chassis:not(.flat-view) .key.accent {
   box-shadow: 
     inset 0 1px 1px var(--accent-shadow-top),
-    -1px 1px 0 var(--accent-shadow-bottom),
-    -2px 2px 0 var(--accent-shadow-bottom),
-    -3px 3px 0 var(--accent-shadow-bottom),
-    -4px 4px 0 var(--accent-shadow-bottom),
-    -5px 5px 0 var(--accent-shadow-bottom),
-    -6px 6px 0 var(--accent-shadow-bottom),
-    -7px 7px 0 var(--accent-shadow-bottom),
-    -12px 12px 15px rgba(0, 0, 0, 0.5);
+    0 1px 0 var(--accent-shadow-bottom),
+    0 2px 0 var(--accent-shadow-bottom),
+    0 3px 0 var(--accent-shadow-bottom),
+    0 4px 0 var(--accent-shadow-bottom),
+    0 5px 0 var(--accent-shadow-bottom),
+    0 6px 0 var(--accent-shadow-bottom),
+    0 7px 0 var(--accent-shadow-bottom),
+    0 15px 15px rgba(0, 0, 0, 0.5);
 }
 
 .keyboard-chassis:not(.flat-view) .key.accent.active, 
 .keyboard-chassis:not(.flat-view) .key.accent:active {
   box-shadow: 
     inset 0 1px 1px var(--accent-shadow-top),
-    -1px 1px 0 var(--accent-shadow-bottom),
-    -2px 2px 0 var(--accent-shadow-bottom),
-    -3px 3px 0 var(--accent-shadow-bottom),
-    -6px 6px 8px rgba(0, 0, 0, 0.5);
+    0 1px 0 var(--accent-shadow-bottom),
+    0 2px 0 var(--accent-shadow-bottom),
+    0 3px 0 var(--accent-shadow-bottom),
+    0 8px 10px rgba(0, 0, 0, 0.5);
 }
 
 /* Profiles */
