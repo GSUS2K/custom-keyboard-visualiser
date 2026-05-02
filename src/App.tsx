@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef, createContext, useContext } from 'react';
 import './index.css';
 
-export const KeyboardConfigContext = createContext<Record<string, { bg?: string, text?: string, sound?: string, label?: string }>>({});
+export const KeyboardConfigContext = createContext<Record<string, { bg?: string, text?: string, sound?: string, label?: string, synth?: { freq: number, pitchVarMultiplier: number, gainMultiplier: number, q: number } }>>({});
 
 // Reusable Audio Context and Analyser
 let audioCtx: AudioContext | null = null;
@@ -40,7 +40,7 @@ const createPluckedNoise = (t: number, duration: number, freq: number, q: number
   noise.stop(t + duration);
 }
 
-const playTypingSound = (switchType: string) => {
+const playTypingSound = (switchType: string, synthConf?: { freq: number, pitchVarMultiplier: number, gainMultiplier: number, q: number }) => {
   initAudio();
   if (!audioCtx || !analyser) return;
 
@@ -134,6 +134,18 @@ const playTypingSound = (switchType: string) => {
     createPluckedNoise(t, 0.04, 1800 * pitchVar, 0.8);
     createPluckedNoise(t, 0.08, 400 * pitchVar, 1.5);
     osc.start(t); osc.stop(t + 0.07);
+  } else if (switchType === 'custom' && synthConf) {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(synthConf.freq * pitchVar * synthConf.pitchVarMultiplier, t);
+    osc.frequency.exponentialRampToValueAtTime((synthConf.freq / 2) * pitchVar * synthConf.pitchVarMultiplier, t + 0.05);
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(2.0 * gainVar * synthConf.gainMultiplier, t + 0.005);
+    gain.gain.exponentialRampToValueAtTime(0.01, t + 0.08);
+    osc.connect(gain); gain.connect(analyser);
+    createPluckedNoise(t, 0.04, (synthConf.freq * 5) * pitchVar * synthConf.pitchVarMultiplier, synthConf.q);
+    osc.start(t); osc.stop(t + 0.08);
   }
 };
 
@@ -523,7 +535,7 @@ function App() {
   // Build Mode
   const [buildMode, setBuildMode] = useState(false);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
-  const [keyConfig, setKeyConfig] = useState<Record<string, { bg?: string, text?: string, sound?: string, label?: string }>>({});
+  const [keyConfig, setKeyConfig] = useState<Record<string, { bg?: string, text?: string, sound?: string, label?: string, synth?: { freq: number, pitchVarMultiplier: number, gainMultiplier: number, q: number } }>>({});
 
   // UI
   const [showSettings, setShowSettings] = useState(true);
@@ -577,7 +589,8 @@ function App() {
     }
 
     if (soundEnabled) {
-      playTypingSound(keyConfig[e.code]?.sound || switchType);
+      const keyConf = keyConfig[e.code];
+      playTypingSound(keyConf?.sound || switchType, keyConf?.synth);
     }
     
     if (particlesEnabled && e.key.length === 1) {
@@ -797,9 +810,45 @@ function App() {
 
     window.dispatchEvent(new KeyboardEvent('keydown', { key, code, bubbles: true }));
     
+    if (soundEnabled) {
+      const keyConf = keyConfig[code];
+      playTypingSound(keyConf?.sound || switchType, keyConf?.synth);
+    }
+    
     setTimeout(() => {
       window.dispatchEvent(new KeyboardEvent('keyup', { key, code, bubbles: true }));
     }, 100);
+  };
+
+  const handleExportProfile = () => {
+    const profile = { keyboardType, switchType, theme, rgbMode, keyConfig };
+    const blob = new Blob([JSON.stringify(profile, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'keyboard-profile.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportProfile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target?.result as string);
+        if (data.keyboardType) setKeyboardType(data.keyboardType);
+        if (data.switchType) setSwitchType(data.switchType);
+        if (data.theme) setTheme(data.theme);
+        if (data.rgbMode) setRgbMode(data.rgbMode);
+        if (data.keyConfig) setKeyConfig(data.keyConfig);
+      } catch (err) {
+        alert("Invalid profile file");
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
   };
 
   const renderTextWords = () => {
@@ -950,8 +999,55 @@ function App() {
                   <option value="topre">Deep Topre</option>
                   <option value="silent">Silent Linear</option>
                   <option value="heavy_tactile">Massive Bump</option>
+                  <option value="custom">🛠️ Custom Synthesizer</option>
                 </select>
               </div>
+
+              {keyConfig[selectedKey]?.sound === 'custom' && (
+                <div className="custom-synth-controls">
+                  <div className="builder-row">
+                    <label>Base Freq (Hz)</label>
+                    <input 
+                      type="range" min="100" max="2000" step="10" 
+                      value={keyConfig[selectedKey]?.synth?.freq || 400} 
+                      onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { pitchVarMultiplier: 1, gainMultiplier: 1, q: 1.2 }), freq: parseFloat(e.target.value) } } }))}
+                    />
+                  </div>
+                  <div className="builder-row">
+                    <label>Pitch Bend</label>
+                    <input 
+                      type="range" min="0.5" max="2.0" step="0.1" 
+                      value={keyConfig[selectedKey]?.synth?.pitchVarMultiplier || 1.0} 
+                      onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { freq: 400, gainMultiplier: 1, q: 1.2 }), pitchVarMultiplier: parseFloat(e.target.value) } } }))}
+                    />
+                  </div>
+                  <div className="builder-row">
+                    <label>Gain (Volume)</label>
+                    <input 
+                      type="range" min="0.1" max="3.0" step="0.1" 
+                      value={keyConfig[selectedKey]?.synth?.gainMultiplier || 1.0} 
+                      onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { freq: 400, pitchVarMultiplier: 1, q: 1.2 }), gainMultiplier: parseFloat(e.target.value) } } }))}
+                    />
+                  </div>
+                  <div className="builder-row">
+                    <label>Resonance (Q)</label>
+                    <input 
+                      type="range" min="0.1" max="5.0" step="0.1" 
+                      value={keyConfig[selectedKey]?.synth?.q || 1.2} 
+                      onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { freq: 400, pitchVarMultiplier: 1, gainMultiplier: 1 }), q: parseFloat(e.target.value) } } }))}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
+              <button 
+                className="save-close-btn" 
+                onClick={() => setSelectedKey(null)}
+              >
+                💾 Save & Close
+              </button>
             </div>
           </div>
         )}
@@ -1066,6 +1162,16 @@ function App() {
             <option value="dracula">Dracula (Dark)</option>
             <option value="arctic">Arctic Ice (Light)</option>
           </select>
+        </div>
+        <div className="control-group">
+          <label>Data Management</label>
+          <div className="game-modes" style={{ width: '100%' }}>
+            <button style={{flex: 1}} onClick={handleExportProfile}>📤 Export Profile</button>
+            <button style={{flex: 1, position: 'relative'}}>
+              📥 Import Profile
+              <input type="file" accept=".json" onChange={handleImportProfile} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }} />
+            </button>
+          </div>
         </div>
       </div>
     </div>

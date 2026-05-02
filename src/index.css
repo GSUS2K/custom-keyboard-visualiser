@@ -1194,3 +1194,31 @@ body.hide-keycaps .key.active::after {
   max-width: 150px;
   font-size: 0.85rem;
 }
+
+.save-close-btn {
+  background: var(--accent-color);
+  color: #000;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+  transition: transform 0.1s;
+}
+.save-close-btn:active {
+  transform: scale(0.95);
+}
+.custom-synth-controls {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed rgba(255,255,255,0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+.custom-synth-controls input[type="range"] {
+  width: 150px;
+  accent-color: var(--accent-color);
+}
+
