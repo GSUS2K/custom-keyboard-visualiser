@@ -555,24 +555,89 @@ select:hover, select:focus {
   min-height: 100px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-start;
   box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+  position: relative;
+  transition: opacity 0.3s ease;
+}
+
+.typeracer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.game-modes {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.game-modes button {
+  background: transparent;
+  border: none;
+  color: var(--page-text);
+  opacity: 0.5;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.game-modes button:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.game-modes button.active {
+  opacity: 1;
+  color: var(--accent-color);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.restart-btn {
+  background: transparent;
+  border: none;
+  color: var(--page-text);
+  opacity: 0.6;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.restart-btn:hover {
+  opacity: 1;
+  color: var(--accent-color);
+  transform: rotate(180deg);
 }
 
 .typeracer-text {
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   line-height: 1.6;
-  letter-spacing: 0.02em;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
-  text-align: center;
+  text-align: left;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0; /* Space between rows, no horizontal gap because spaces are rendered as characters */
+  transition: filter 0.3s ease;
+}
+
+.typeracer-container.finished .typeracer-text {
+  filter: blur(4px);
+  opacity: 0.4;
+}
+
+.typeracer-word {
+  display: inline-flex;
 }
 
 .typeracer-char {
   color: var(--page-text);
   opacity: 0.3;
-  transition: all 0.05s;
+  transition: color 0.1s;
 }
 
 .typeracer-char.correct {
@@ -594,10 +659,19 @@ select:hover, select:focus {
 }
 
 .typeracer-finish {
-  margin-top: 1rem;
-  font-size: 1rem;
-  color: var(--accent-color);
-  animation: popIn 0.3s ease;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.2rem;
+  color: var(--page-text-highlight);
+  background: rgba(0,0,0,0.8);
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  border: 1px solid var(--accent-color);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 10;
 }
 
 @keyframes blink {
@@ -605,6 +679,6 @@ select:hover, select:focus {
 }
 
 @keyframes popIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translate(-50%, -30px) scale(0.9); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }

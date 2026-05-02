@@ -56,12 +56,9 @@ const playTypingSound = (switchType: string) => {
     oscGain.gain.linearRampToValueAtTime(1.8 * gainVar, t + 0.003);
     oscGain.gain.exponentialRampToValueAtTime(0.01, t + 0.08);
     osc.connect(oscGain); oscGain.connect(analyser);
-    
     createPluckedNoise(t, 0.05, 800 * pitchVar);
     createPluckedNoise(t, 0.1, 200 * pitchVar, 0.5);
-
     osc.start(t); osc.stop(t + 0.08);
-
   } else if (switchType === 'tactile') {
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
@@ -72,12 +69,9 @@ const playTypingSound = (switchType: string) => {
     gain.gain.linearRampToValueAtTime(2.2 * gainVar, t + 0.002);
     gain.gain.exponentialRampToValueAtTime(0.01, t + 0.06);
     osc.connect(gain); gain.connect(analyser);
-
     createPluckedNoise(t, 0.03, 1500 * pitchVar);
     createPluckedNoise(t + 0.01, 0.06, 600 * pitchVar);
-
     osc.start(t); osc.stop(t + 0.06);
-
   } else if (switchType === 'clicky') {
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
@@ -88,7 +82,6 @@ const playTypingSound = (switchType: string) => {
     gain.gain.linearRampToValueAtTime(0.5 * gainVar, t + 0.001);
     gain.gain.exponentialRampToValueAtTime(0.01, t + 0.02);
     osc.connect(gain); gain.connect(analyser);
-
     const osc2 = audioCtx.createOscillator();
     const gain2 = audioCtx.createGain();
     osc2.type = 'triangle';
@@ -98,12 +91,9 @@ const playTypingSound = (switchType: string) => {
     gain2.gain.linearRampToValueAtTime(1.0 * gainVar, t + 0.005);
     gain2.gain.exponentialRampToValueAtTime(0.01, t + 0.05);
     osc2.connect(gain2); gain2.connect(analyser);
-
     createPluckedNoise(t, 0.03, 3000 * pitchVar);
-
     osc.start(t); osc.stop(t + 0.02);
     osc2.start(t); osc2.stop(t + 0.05);
-
   } else if (switchType === 'topre') {
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
@@ -114,12 +104,9 @@ const playTypingSound = (switchType: string) => {
     gain.gain.linearRampToValueAtTime(2.5 * gainVar, t + 0.01);
     gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
     osc.connect(gain); gain.connect(analyser);
-
     createPluckedNoise(t, 0.08, 300 * pitchVar, 0.8);
     createPluckedNoise(t + 0.01, 0.05, 120 * pitchVar, 0.5);
-
     osc.start(t); osc.stop(t + 0.1);
-
   } else if (switchType === 'silent') {
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
@@ -130,11 +117,8 @@ const playTypingSound = (switchType: string) => {
     gain.gain.linearRampToValueAtTime(0.6 * gainVar, t + 0.005);
     gain.gain.exponentialRampToValueAtTime(0.01, t + 0.04);
     osc.connect(gain); gain.connect(analyser);
-
     createPluckedNoise(t, 0.03, 400 * pitchVar, 2.0);
-
     osc.start(t); osc.stop(t + 0.04);
-
   } else if (switchType === 'heavy_tactile') {
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
@@ -145,23 +129,23 @@ const playTypingSound = (switchType: string) => {
     gain.gain.linearRampToValueAtTime(2.0 * gainVar, t + 0.001);
     gain.gain.exponentialRampToValueAtTime(0.01, t + 0.07);
     osc.connect(gain); gain.connect(analyser);
-
     createPluckedNoise(t, 0.04, 1800 * pitchVar, 0.8);
     createPluckedNoise(t, 0.08, 400 * pitchVar, 1.5);
-
     osc.start(t); osc.stop(t + 0.07);
   }
 };
 
-const QUOTES = [
-  "The quick brown fox jumps over the lazy dog.",
-  "Mechanical keyboards provide a superior tactile typing experience.",
-  "Customizing your acoustic profile can significantly alter your workflow.",
-  "A journey of a thousand miles begins with a single keystroke.",
-  "Building a custom keyboard is both an art and a science.",
-  "To be or not to be, that is the thocky question.",
-  "Typing fast requires rhythm, accuracy, and the perfect switch."
+const COMMON_WORDS = [
+  "the", "be", "of", "and", "a", "to", "in", "he", "have", "it", "that", "for", "they", "I", "with", "as", "not", "on", "she", "at", "by", "this", "we", "you", "do", "but", "from", "or", "which", "one", "would", "all", "will", "there", "say", "who", "make", "when", "can", "more", "if", "no", "man", "out", "other", "so", "what", "time", "up", "go", "about", "than", "into", "could", "state", "only", "new", "year", "some", "take", "come", "these", "know", "see", "use", "get", "like", "then", "first", "any", "work", "now", "may", "such", "give", "over", "think", "most", "even", "find", "day", "also", "after", "way", "many", "must", "look", "before", "great", "back", "through", "long", "where", "much", "should", "well", "people", "down", "own", "just", "because", "good", "each", "those", "feel", "seem", "how", "high", "too", "place", "little", "world", "very", "still", "nation", "hand", "old", "life", "tell", "write", "become", "here", "show", "house", "both", "between", "need", "mean", "call", "develop", "under", "last", "right", "move", "thing", "general", "school", "never", "same", "another", "begin", "while", "number", "part", "turn", "real", "leave", "might", "want", "point", "form", "off", "child", "few", "small", "since", "against", "ask", "late", "home", "interest", "large", "person", "end", "open", "public", "follow", "during", "present", "without", "again", "hold", "govern", "around", "possible", "head", "consider", "word", "program", "problem", "however", "lead", "system", "set", "order", "eye", "plan", "run", "keep", "face", "fact", "group", "play", "stand", "increase", "early", "course", "change", "help", "line"
 ];
+
+const generateQuote = (wordCount: number) => {
+  let q = [];
+  for(let i=0; i<wordCount; i++) {
+    q.push(COMMON_WORDS[Math.floor(Math.random() * COMMON_WORDS.length)]);
+  }
+  return q.join(' ');
+}
 
 const Key = ({ label, subLabel, span = 4, className = '', keyCode, activeKeys, onManualPress }: any) => {
   const isPressed = activeKeys.has(keyCode);
@@ -502,7 +486,8 @@ function App() {
   const [preset, setPreset] = useState('custom');
 
   // TypeRacer Game State
-  const [quote, setQuote] = useState(QUOTES[0]);
+  const [wordCountTarget, setWordCountTarget] = useState(20);
+  const [quote, setQuote] = useState(generateQuote(20));
   const [typed, setTyped] = useState('');
   const [gameActive, setGameActive] = useState(false);
   const [gameFinished, setGameFinished] = useState(false);
@@ -513,21 +498,27 @@ function App() {
   const [accuracy, setAccuracy] = useState(100);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const startNewGame = useCallback(() => {
-    const randomQuote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
-    setQuote(randomQuote);
+  const startNewGame = useCallback((targetWords: number = wordCountTarget) => {
+    setWordCountTarget(targetWords);
+    setQuote(generateQuote(targetWords));
     setTyped('');
     setGameActive(false);
     setGameFinished(false);
     setWpm(0);
     setAccuracy(100);
     startTime.current = null;
-  }, []);
+  }, [wordCountTarget]);
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.repeat) return;
     
-    // Ignore meta/ctrl key chords so we don't type shortcuts
+    // Quick restart shortcut: Tab + Enter is nice, but we can also just let the user click the button.
+    // Let's intercept Enter if game is finished
+    if (gameFinished && e.key === 'Enter') {
+      startNewGame();
+      return;
+    }
+
     if (e.ctrlKey || e.metaKey || e.altKey) {
       setActiveKeys(prev => new Set(prev).add(e.code));
       return;
@@ -541,10 +532,7 @@ function App() {
       return next;
     });
 
-    if (gameFinished) {
-      if (e.key === 'Enter') startNewGame();
-      return;
-    }
+    if (gameFinished) return;
 
     // TypeRacer Logic
     setTyped(prev => {
@@ -557,11 +545,14 @@ function App() {
           setGameActive(true);
           startTime.current = Date.now();
         }
-        nextTyped = prev + e.key;
+        // Prevent typing beyond the length of the quote
+        if (prev.length < quote.length) {
+          nextTyped = prev + e.key;
+        }
       }
 
       // Check completion
-      if (nextTyped === quote) {
+      if (nextTyped.length === quote.length) {
         setGameActive(false);
         setGameFinished(true);
       }
@@ -588,7 +579,6 @@ function App() {
     };
   }, [handleKeyDown, handleKeyUp]);
 
-  // Handle Preset changes
   useEffect(() => {
     if (preset === 'wooting') {
       setKeyboardType('60'); setSwitchType('linear'); setProfile('cherry'); setTheme('default');
@@ -603,23 +593,19 @@ function App() {
     }
   }, [preset]);
 
-  // Apply theme class to body
   useEffect(() => {
     document.body.className = `theme-${theme}`;
   }, [theme]);
 
-  // WPM & Accuracy Calculator
   useEffect(() => {
     let interval: any;
     if (gameActive && startTime.current) {
       interval = setInterval(() => {
         const elapsedMinutes = (Date.now() - startTime.current!) / 60000;
         if (elapsedMinutes > 0) {
-          // Calculate WPM: (characters typed / 5) / minutes
           const currentWpm = Math.round((typed.length / 5) / elapsedMinutes);
           setWpm(currentWpm);
           
-          // Calculate Accuracy
           let correct = 0;
           for (let i = 0; i < typed.length; i++) {
             if (typed[i] === quote[i]) correct++;
@@ -631,7 +617,6 @@ function App() {
     return () => clearInterval(interval);
   }, [gameActive, typed, quote]);
 
-  // Audio Visualizer Loop
   useEffect(() => {
     let animationId: number;
     const canvas = canvasRef.current;
@@ -660,12 +645,8 @@ function App() {
       for (let i = 0; i < bufferLength; i++) {
         const v = dataArray[i] / 128.0;
         const y = v * canvas.height / 2;
-
-        if (i === 0) {
-          ctx.moveTo(x, y);
-        } else {
-          ctx.lineTo(x, y);
-        }
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
         x += sliceWidth;
       }
       ctx.lineTo(canvas.width, canvas.height / 2);
@@ -678,11 +659,7 @@ function App() {
 
   const handleManualPress = (code: string) => {
     playTypingSound(switchType);
-    setActiveKeys(prev => {
-      const next = new Set(prev);
-      next.add(code);
-      return next;
-    });
+    setActiveKeys(prev => new Set(prev).add(code));
     setTimeout(() => {
       setActiveKeys(prev => {
         const next = new Set(prev);
@@ -692,20 +669,39 @@ function App() {
     }, 100);
   };
 
-  // Render TypeRacer text
-  const renderText = () => {
-    return quote.split('').map((char, index) => {
-      let className = 'typeracer-char';
-      if (index < typed.length) {
-        className += typed[index] === char ? ' correct' : ' incorrect';
-      } else if (index === typed.length) {
-        className += ' cursor';
-      }
-      return (
-        <span key={index} className={className}>
-          {char}
+  const renderTextWords = () => {
+    const words = quote.split(' ');
+    let charIndex = 0;
+    
+    return words.map((word, wordIdx) => {
+      const wordSpan = (
+        <span key={wordIdx} className="typeracer-word">
+          {word.split('').map((char, i) => {
+            const currentIdx = charIndex++;
+            let className = 'typeracer-char';
+            
+            if (currentIdx < typed.length) {
+              className += typed[currentIdx] === char ? ' correct' : ' incorrect';
+            } else if (currentIdx === typed.length && !gameFinished) {
+              className += ' cursor';
+            }
+            
+            return <span key={i} className={className}>{char}</span>;
+          })}
+          {/* Render the space after the word, unless it's the last word */}
+          {wordIdx < words.length - 1 && (() => {
+            const currentIdx = charIndex++;
+            let className = 'typeracer-char space';
+            if (currentIdx < typed.length) {
+              className += typed[currentIdx] === ' ' ? ' correct' : ' incorrect';
+            } else if (currentIdx === typed.length && !gameFinished) {
+              className += ' cursor';
+            }
+            return <span key={`space-${wordIdx}`} className={className}>&nbsp;</span>;
+          })()}
         </span>
       );
+      return wordSpan;
     });
   };
 
@@ -717,7 +713,6 @@ function App() {
           <p>The ultimate custom acoustic and visual layout simulator</p>
         </div>
 
-        {/* Real-time statistics and visualizer widget */}
         <div className="dashboard">
           <div className="stat-box">
             <span className="stat-value">{wpm}</span>
@@ -733,13 +728,24 @@ function App() {
           </div>
         </div>
 
-        <div className="typeracer-container">
-          <div className="typeracer-text">
-            {renderText()}
+        <div className={`typeracer-container ${gameFinished ? 'finished' : ''}`}>
+          <div className="typeracer-header">
+            <div className="game-modes">
+              <button className={wordCountTarget === 10 ? 'active' : ''} onClick={() => startNewGame(10)}>10</button>
+              <button className={wordCountTarget === 20 ? 'active' : ''} onClick={() => startNewGame(20)}>20</button>
+              <button className={wordCountTarget === 50 ? 'active' : ''} onClick={() => startNewGame(50)}>50</button>
+              <button className={wordCountTarget === 100 ? 'active' : ''} onClick={() => startNewGame(100)}>100</button>
+            </div>
+            <button className="restart-btn" onClick={() => startNewGame()} title="Restart Test">↻</button>
           </div>
+          
+          <div className="typeracer-text">
+            {renderTextWords()}
+          </div>
+          
           {gameFinished && (
             <div className="typeracer-finish">
-              Test Completed! Press <strong>Enter</strong> to restart.
+              Test Completed! Press <strong>Enter</strong> or click Restart to try again.
             </div>
           )}
         </div>
