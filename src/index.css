@@ -839,7 +839,7 @@ select:hover, select:focus {
   margin-bottom: 0.5rem;
   width: 100%;
   max-width: 850px;
-  min-height: 100px;
+  height: 180px; /* Fixed height to prevent shifting */
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -852,7 +852,8 @@ select:hover, select:focus {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
+  flex-shrink: 0; /* Prevent header from shrinking */
 }
 
 .sandbox-title {
@@ -867,9 +868,25 @@ select:hover, select:focus {
 .sandbox-viewport {
   width: 100%;
   position: relative;
-  min-height: 60px;
+  height: 100%;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-x: hidden;
+  padding-bottom: 1rem;
+}
+
+/* Custom Scrollbar for Sandbox */
+.sandbox-viewport::-webkit-scrollbar {
+  width: 6px;
+}
+.sandbox-viewport::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.1);
+  border-radius: 4px;
+}
+.sandbox-viewport::-webkit-scrollbar-thumb {
+  background: var(--accent-color);
+  border-radius: 4px;
 }
 
 .sandbox-text {
@@ -877,6 +894,8 @@ select:hover, select:focus {
   font-family: 'Roboto Mono', 'Courier New', monospace;
   font-weight: 500;
   white-space: pre-wrap;
+  word-break: break-all; /* Force long gibberish to wrap */
+  overflow-wrap: anywhere;
   color: var(--page-text);
   width: 100%;
   line-height: 1.4;
