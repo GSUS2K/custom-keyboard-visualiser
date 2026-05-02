@@ -153,7 +153,15 @@ const playTypingSound = (switchType: string) => {
   }
 };
 
-
+const QUOTES = [
+  "The quick brown fox jumps over the lazy dog.",
+  "Mechanical keyboards provide a superior tactile typing experience.",
+  "Customizing your acoustic profile can significantly alter your workflow.",
+  "A journey of a thousand miles begins with a single keystroke.",
+  "Building a custom keyboard is both an art and a science.",
+  "To be or not to be, that is the thocky question.",
+  "Typing fast requires rhythm, accuracy, and the perfect switch."
+];
 
 const Key = ({ label, subLabel, span = 4, className = '', keyCode, activeKeys, onManualPress }: any) => {
   const isPressed = activeKeys.has(keyCode);
@@ -493,22 +501,75 @@ function App() {
   const [profile, setProfile] = useState('cherry');
   const [preset, setPreset] = useState('custom');
 
+  // TypeRacer Game State
+  const [quote, setQuote] = useState(QUOTES[0]);
+  const [typed, setTyped] = useState('');
+  const [gameActive, setGameActive] = useState(false);
+  const [gameFinished, setGameFinished] = useState(false);
+  const startTime = useRef<number | null>(null);
+  
   // Stats
-  const [totalKeys, setTotalKeys] = useState(0);
   const [wpm, setWpm] = useState(0);
-  const startTime = useRef(Date.now());
+  const [accuracy, setAccuracy] = useState(100);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const startNewGame = useCallback(() => {
+    const randomQuote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+    setQuote(randomQuote);
+    setTyped('');
+    setGameActive(false);
+    setGameFinished(false);
+    setWpm(0);
+    setAccuracy(100);
+    startTime.current = null;
+  }, []);
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.repeat) return;
+    
+    // Ignore meta/ctrl key chords so we don't type shortcuts
+    if (e.ctrlKey || e.metaKey || e.altKey) {
+      setActiveKeys(prev => new Set(prev).add(e.code));
+      return;
+    }
+
     playTypingSound(switchType);
+    
     setActiveKeys(prev => {
       const next = new Set(prev);
       next.add(e.code);
       return next;
     });
-    setTotalKeys(prev => prev + 1);
-  }, [switchType]);
+
+    if (gameFinished) {
+      if (e.key === 'Enter') startNewGame();
+      return;
+    }
+
+    // TypeRacer Logic
+    setTyped(prev => {
+      let nextTyped = prev;
+      
+      if (e.key === 'Backspace') {
+        nextTyped = prev.slice(0, -1);
+      } else if (e.key.length === 1) { // Printable characters
+        if (!gameActive && prev.length === 0) {
+          setGameActive(true);
+          startTime.current = Date.now();
+        }
+        nextTyped = prev + e.key;
+      }
+
+      // Check completion
+      if (nextTyped === quote) {
+        setGameActive(false);
+        setGameFinished(true);
+      }
+
+      return nextTyped;
+    });
+
+  }, [switchType, gameActive, gameFinished, quote, startNewGame]);
 
   const handleKeyUp = useCallback((e: KeyboardEvent) => {
     setActiveKeys(prev => {
@@ -547,16 +608,28 @@ function App() {
     document.body.className = `theme-${theme}`;
   }, [theme]);
 
-  // WPM Calculator
+  // WPM & Accuracy Calculator
   useEffect(() => {
-    const interval = setInterval(() => {
-      const elapsedMinutes = (Date.now() - startTime.current) / 60000;
-      if (elapsedMinutes > 0) {
-        setWpm(Math.round((totalKeys / 5) / elapsedMinutes)); // Standard 5 chars = 1 word
-      }
-    }, 1000);
+    let interval: any;
+    if (gameActive && startTime.current) {
+      interval = setInterval(() => {
+        const elapsedMinutes = (Date.now() - startTime.current!) / 60000;
+        if (elapsedMinutes > 0) {
+          // Calculate WPM: (characters typed / 5) / minutes
+          const currentWpm = Math.round((typed.length / 5) / elapsedMinutes);
+          setWpm(currentWpm);
+          
+          // Calculate Accuracy
+          let correct = 0;
+          for (let i = 0; i < typed.length; i++) {
+            if (typed[i] === quote[i]) correct++;
+          }
+          setAccuracy(typed.length > 0 ? Math.round((correct / typed.length) * 100) : 100);
+        }
+      }, 500);
+    }
     return () => clearInterval(interval);
-  }, [totalKeys]);
+  }, [gameActive, typed, quote]);
 
   // Audio Visualizer Loop
   useEffect(() => {
@@ -577,8 +650,6 @@ function App() {
       analyser.getByteTimeDomainData(dataArray);
 
       ctx.lineWidth = 2;
-      
-      // Select stroke color based on theme
       const strokeColor = getComputedStyle(document.body).getPropertyValue('--accent-color') || '#fca311';
       ctx.strokeStyle = strokeColor.trim();
       ctx.beginPath();
@@ -612,7 +683,6 @@ function App() {
       next.add(code);
       return next;
     });
-    setTotalKeys(prev => prev + 1);
     setTimeout(() => {
       setActiveKeys(prev => {
         const next = new Set(prev);
@@ -620,6 +690,23 @@ function App() {
         return next;
       });
     }, 100);
+  };
+
+  // Render TypeRacer text
+  const renderText = () => {
+    return quote.split('').map((char, index) => {
+      let className = 'typeracer-char';
+      if (index < typed.length) {
+        className += typed[index] === char ? ' correct' : ' incorrect';
+      } else if (index === typed.length) {
+        className += ' cursor';
+      }
+      return (
+        <span key={index} className={className}>
+          {char}
+        </span>
+      );
+    });
   };
 
   return (
@@ -641,9 +728,20 @@ function App() {
             <span className="stat-label">Acoustic Waveform</span>
           </div>
           <div className="stat-box">
-            <span className="stat-value">{totalKeys}</span>
-            <span className="stat-label">Keystrokes</span>
+            <span className="stat-value">{accuracy}%</span>
+            <span className="stat-label">Accuracy</span>
           </div>
+        </div>
+
+        <div className="typeracer-container">
+          <div className="typeracer-text">
+            {renderText()}
+          </div>
+          {gameFinished && (
+            <div className="typeracer-finish">
+              Test Completed! Press <strong>Enter</strong> to restart.
+            </div>
+          )}
         </div>
         
         <div className="controls-wrapper">
