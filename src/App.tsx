@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import './index.css';
 
 // Reusable Audio Context to avoid limits and leaks
