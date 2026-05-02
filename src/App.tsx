@@ -565,13 +565,6 @@ function App() {
     if (rgbMode === 'reactive') {
       reactiveHueRef.current = (reactiveHueRef.current + 35) % 360;
       document.documentElement.style.setProperty('--reactive-hue', `${reactiveHueRef.current}deg`);
-      
-      const chassis = document.querySelector('.keyboard-chassis');
-      if (chassis) {
-        chassis.classList.remove('reactive-flash');
-        void (chassis as HTMLElement).offsetWidth; // trigger reflow
-        chassis.classList.add('reactive-flash');
-      }
     }
 
     setActiveKeys(prev => {

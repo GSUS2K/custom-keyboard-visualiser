@@ -509,15 +509,15 @@ select:hover, select:focus {
   padding: 1.8rem;
   border-radius: 20px;
   border: 1px solid var(--board-border);
-  box-shadow: var(--board-shadow), var(--board-glow);
+  box-shadow: 0 15px 0 rgba(0, 0, 0, 0.5), var(--board-shadow), var(--board-glow);
   position: relative;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  transform: rotateX(12deg) translateY(-20px);
+  transform: perspective(1200px) rotateX(30deg) translateY(-20px) scale(0.9);
   transform-style: preserve-3d;
 }
 
 .keyboard-chassis.flat-view {
-  transform: none;
+  transform: scale(0.95);
   box-shadow: 0 10px 40px rgba(0,0,0,0.4), var(--board-glow);
 }
 
@@ -638,6 +638,20 @@ select:hover, select:focus {
     0 2px 4px rgba(0, 0, 0, 0.4);
   filter: brightness(0.85);
   color: var(--key-text-highlight);
+}
+
+body.rgb-reactive .key.active {
+  box-shadow: 0 0 35px 10px var(--accent-color), inset 0 2px 5px rgba(255,255,255,0.8);
+  border-color: var(--accent-color);
+  background: var(--accent-color);
+  color: #000;
+  filter: hue-rotate(var(--reactive-hue, 0deg)) brightness(1.5);
+  z-index: 10;
+  transition: all 0.05s ease-out;
+}
+
+body.rgb-reactive .key {
+  transition: box-shadow 0.4s ease-out, background 0.4s ease-out, filter 0.4s ease-out;
 }
 
 /* Base RGB Glow Underneath Keys */
