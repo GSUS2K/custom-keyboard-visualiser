@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
+  /* Default Dark Glass Theme */
   --bg-color: #0d0f14;
   --key-bg: linear-gradient(180deg, #1f2229 0%, #17191e 100%);
   --key-border: #292d36;
@@ -21,6 +22,90 @@
   --board-border: #1d212b;
   --board-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.95), inset 0 2px 0 rgba(255, 255, 255, 0.04);
   --board-glow: 0 0 100px rgba(252, 163, 17, 0.08);
+
+  --bg-gradient-1: rgba(252, 163, 17, 0.05);
+  --bg-gradient-2: rgba(99, 102, 241, 0.04);
+}
+
+/* Retro Beige Theme */
+.theme-retro {
+  --bg-color: #e5e0d8;
+  --key-bg: linear-gradient(180deg, #f4f0e6 0%, #e8e4da 100%);
+  --key-border: #d1ccbf;
+  --key-shadow-top: rgba(255, 255, 255, 0.8);
+  --key-shadow-bottom: rgba(0, 0, 0, 0.25);
+  --key-text: #5a5549;
+  --key-text-highlight: #2c2922;
+  
+  --accent-color: #d9534f;
+  --accent-key-bg: linear-gradient(180deg, #d9534f 0%, #b54541 100%);
+  --accent-key-border: #a33e3a;
+  --accent-shadow-top: rgba(255, 255, 255, 0.4);
+  --accent-shadow-bottom: rgba(0, 0, 0, 0.3);
+
+  --knob-bg: conic-gradient(from 180deg at 50% 50%, #e8e4da 0deg, #f4f0e6 180deg, #e8e4da 360deg);
+  
+  --board-bg: #dcd7ce;
+  --board-border: #c4beaf;
+  --board-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.3), inset 0 2px 0 rgba(255, 255, 255, 0.5);
+  --board-glow: 0 0 100px rgba(217, 83, 79, 0.1);
+
+  --bg-gradient-1: rgba(217, 83, 79, 0.05);
+  --bg-gradient-2: rgba(92, 184, 92, 0.05);
+}
+
+/* Vaporwave Theme */
+.theme-vaporwave {
+  --bg-color: #2b1055;
+  --key-bg: linear-gradient(180deg, #3d1c73 0%, #2b1055 100%);
+  --key-border: #522796;
+  --key-shadow-top: rgba(255, 113, 206, 0.3);
+  --key-shadow-bottom: rgba(0, 0, 0, 0.8);
+  --key-text: #01cdfe;
+  --key-text-highlight: #fffb96;
+  
+  --accent-color: #ff71ce;
+  --accent-key-bg: linear-gradient(180deg, #ff71ce 0%, #d65ab1 100%);
+  --accent-key-border: #a8478c;
+  --accent-shadow-top: rgba(255, 255, 255, 0.4);
+  --accent-shadow-bottom: rgba(0, 0, 0, 0.6);
+
+  --knob-bg: conic-gradient(from 180deg at 50% 50%, #3d1c73 0deg, #05ffa1 180deg, #3d1c73 360deg);
+  
+  --board-bg: #1a0a33;
+  --board-border: #2e125c;
+  --board-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.95), inset 0 2px 0 rgba(1, 205, 254, 0.2);
+  --board-glow: 0 0 100px rgba(255, 113, 206, 0.2);
+
+  --bg-gradient-1: rgba(255, 113, 206, 0.15);
+  --bg-gradient-2: rgba(1, 205, 254, 0.15);
+}
+
+/* Cyberpunk Theme */
+.theme-cyberpunk {
+  --bg-color: #0d0221;
+  --key-bg: linear-gradient(180deg, #fdfb00 0%, #c4c200 100%);
+  --key-border: #8f8d00;
+  --key-shadow-top: rgba(255, 255, 255, 0.4);
+  --key-shadow-bottom: rgba(0, 0, 0, 0.8);
+  --key-text: #0d0221;
+  --key-text-highlight: #000;
+  
+  --accent-color: #00f0ff;
+  --accent-key-bg: linear-gradient(180deg, #00f0ff 0%, #00b8c4 100%);
+  --accent-key-border: #00878f;
+  --accent-shadow-top: rgba(255, 255, 255, 0.5);
+  --accent-shadow-bottom: rgba(0, 0, 0, 0.7);
+
+  --knob-bg: conic-gradient(from 180deg at 50% 50%, #fdfb00 0deg, #0d0221 180deg, #fdfb00 360deg);
+  
+  --board-bg: #2b2b2b;
+  --board-border: #111;
+  --board-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.95), inset 0 2px 0 rgba(253, 251, 0, 0.3);
+  --board-glow: 0 0 100px rgba(0, 240, 255, 0.15);
+
+  --bg-gradient-1: rgba(253, 251, 0, 0.1);
+  --bg-gradient-2: rgba(0, 240, 255, 0.1);
 }
 
 * {
@@ -33,16 +118,17 @@ body {
   padding: 0;
   background-color: var(--bg-color);
   background-image: 
-    radial-gradient(circle at 15% 30%, rgba(252, 163, 17, 0.05), transparent 35%),
-    radial-gradient(circle at 85% 70%, rgba(99, 102, 241, 0.04), transparent 35%);
+    radial-gradient(circle at 15% 30%, var(--bg-gradient-1), transparent 45%),
+    radial-gradient(circle at 85% 70%, var(--bg-gradient-2), transparent 45%);
   color: var(--key-text);
   font-family: 'Inter', sans-serif;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
+  overflow: auto; /* Allow scrolling for full-size keyboard */
   perspective: 1200px;
+  transition: background-color 0.5s ease;
 }
 
 .app-container {
@@ -50,6 +136,8 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 2.5rem;
+  padding: 4rem 2rem;
+  min-width: 100vw;
 }
 
 .header {
@@ -67,7 +155,8 @@ body {
   color: var(--key-text-highlight);
   font-weight: 700;
   letter-spacing: -0.04em;
-  text-shadow: 0 4px 20px rgba(0,0,0,0.8);
+  text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  transition: color 0.5s ease;
 }
 
 .title p {
@@ -75,17 +164,20 @@ body {
   color: var(--key-text);
   font-size: 1.05rem;
   letter-spacing: 0.02em;
+  transition: color 0.5s ease;
 }
 
-.controls {
+.controls-wrapper {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 1.5rem;
-  background: rgba(18, 20, 26, 0.75);
+  background: rgba(18, 20, 26, 0.4);
   padding: 1rem 1.5rem;
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(150, 150, 150, 0.1);
   backdrop-filter: blur(12px);
-  box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
 }
 
 .control-group {
@@ -101,32 +193,36 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.1em;
   font-weight: 700;
+  transition: color 0.5s ease;
 }
 
 select {
-  background: rgba(0,0,0,0.4);
+  background: rgba(0,0,0,0.15);
   color: var(--key-text-highlight);
   border: 1px solid var(--key-border);
-  padding: 0.7rem 1.2rem;
+  padding: 0.6rem 1.2rem;
   border-radius: 8px;
   font-family: 'Inter', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 500;
+  font-size: 0.9rem;
+  font-weight: 600;
   cursor: pointer;
   outline: none;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   appearance: none;
   -webkit-appearance: none;
   padding-right: 2.5rem;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238c92a4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right 0.8rem center;
   background-size: 1.1em;
+  min-width: 180px;
 }
+
+.theme-retro select { background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232c2922' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); }
 
 select:hover, select:focus {
   border-color: var(--accent-color);
-  box-shadow: 0 0 20px rgba(252, 163, 17, 0.15);
+  box-shadow: 0 0 20px var(--bg-gradient-1);
 }
 
 .keyboard-chassis {
@@ -149,10 +245,10 @@ select:hover, select:focus {
   right: 10px;
   bottom: 10px;
   border-radius: 12px;
-  background: rgba(0,0,0,0.35);
+  background: rgba(0,0,0,0.15);
   pointer-events: none;
   z-index: 0;
-  box-shadow: inset 0 6px 20px rgba(0,0,0,0.9);
+  box-shadow: inset 0 6px 20px rgba(0,0,0,0.5);
 }
 
 .keyboard-grid {
@@ -180,14 +276,16 @@ select:hover, select:focus {
   box-shadow: 
     inset 0 1px 1px var(--key-shadow-top),
     0 5px 0 var(--key-shadow-bottom),
-    0 10px 12px rgba(0, 0, 0, 0.5);
+    0 10px 12px rgba(0, 0, 0, 0.3);
   transition: all 0.08s cubic-bezier(0.2, 0.8, 0.2, 1);
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }
 
-/* 3D Keycap Sculpt */
-.key::before {
+/* Profiles */
+
+/* Cherry (Sculpted, default) */
+.profile-cherry .key::before {
   content: '';
   position: absolute;
   top: 4px;
@@ -195,8 +293,57 @@ select:hover, select:focus {
   right: 4px;
   bottom: 14px;
   border-radius: 5px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, transparent 100%);
+  background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%);
   pointer-events: none;
+}
+
+/* XDA (Flat, square) */
+.profile-xda .key {
+  border-radius: 10px;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+.profile-xda .key::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.05);
+  box-shadow: inset 0 2px 4px rgba(255,255,255,0.1);
+  pointer-events: none;
+}
+.profile-xda .key.bottom, .profile-xda .key.accent.bottom {
+  align-items: center;
+  padding: 0;
+}
+.profile-xda .sub-label { display: none; }
+
+/* SA (Tall, spherical, vintage) */
+.profile-sa .key {
+  height: 64px;
+  border-radius: 6px;
+  box-shadow: 
+    inset 0 1px 1px var(--key-shadow-top),
+    0 10px 0 var(--key-shadow-bottom),
+    0 15px 15px rgba(0, 0, 0, 0.4);
+}
+.profile-sa .key::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 10px;
+  right: 10px;
+  bottom: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 20%, rgba(255,255,255,0.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+.profile-sa .key:active, .profile-sa .key.active {
+  transform: translateY(10px);
 }
 
 .key:active, .key.active {
@@ -205,9 +352,8 @@ select:hover, select:focus {
     inset 0 1px 1px var(--key-shadow-top),
     0 0 0 var(--key-shadow-bottom),
     0 2px 4px rgba(0, 0, 0, 0.4);
-  background: linear-gradient(180deg, #2a2e38 0%, #1c1f26 100%);
+  filter: brightness(0.85);
   color: var(--key-text-highlight);
-  border-color: #3f4553;
 }
 
 /* Base RGB Glow Underneath Keys */
@@ -228,20 +374,19 @@ select:hover, select:focus {
 .key.accent {
   background: var(--accent-key-bg);
   border-color: var(--accent-key-border);
-  color: #111;
+  color: var(--bg-color); /* Contrast */
   box-shadow: 
     inset 0 1px 1px var(--accent-shadow-top),
     0 5px 0 var(--accent-shadow-bottom),
-    0 10px 12px rgba(0, 0, 0, 0.5);
+    0 10px 12px rgba(0, 0, 0, 0.3);
 }
 
 .key.accent:active, .key.accent.active {
-  background: linear-gradient(180deg, #e5950f 0%, #cc8400 100%);
   box-shadow: 
     inset 0 1px 1px var(--accent-shadow-top),
     0 0 0 var(--accent-shadow-bottom),
     0 2px 4px rgba(0, 0, 0, 0.4);
-  border-color: #b87400;
+  filter: brightness(0.8);
 }
 
 .key.accent:active::after, .key.accent.active::after {
@@ -272,8 +417,8 @@ select:hover, select:focus {
   background: var(--knob-bg);
   box-shadow: 
     inset 0 1px 1px rgba(255,255,255,0.1),
-    0 6px 8px rgba(0,0,0,0.8),
-    0 12px 20px rgba(0,0,0,0.6);
+    0 6px 8px rgba(0,0,0,0.5),
+    0 12px 20px rgba(0,0,0,0.4);
   position: relative;
   cursor: pointer;
   transition: all 0.08s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -283,8 +428,8 @@ select:hover, select:focus {
   transform: translateY(4px);
   box-shadow: 
     inset 0 1px 1px rgba(255,255,255,0.1),
-    0 2px 3px rgba(0,0,0,0.8),
-    0 5px 8px rgba(0,0,0,0.6);
+    0 2px 3px rgba(0,0,0,0.5),
+    0 5px 8px rgba(0,0,0,0.4);
 }
 
 .knob::after {
@@ -305,7 +450,8 @@ select:hover, select:focus {
   bottom: 10px;
   right: 10px;
   font-size: 0.65rem;
-  color: rgba(142, 149, 165, 0.5);
+  color: var(--key-text);
+  opacity: 0.5;
   font-weight: 500;
 }
 
