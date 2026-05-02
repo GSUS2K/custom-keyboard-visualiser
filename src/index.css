@@ -1316,3 +1316,55 @@ body.hide-keycaps .key.active::after {
   accent-color: var(--accent-color);
   cursor: pointer;
 }
+
+.key {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hidden-key-builder {
+  opacity: 0.2 !important;
+  border: 1px dashed red !important;
+  background: transparent !important;
+}
+
+.visibility-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.visibility-btn.hidden-active {
+  background: rgba(255, 50, 50, 0.2);
+  border-color: rgba(255, 50, 50, 0.5);
+  color: #ffaaaa;
+}
+
+.reset-key-btn {
+  background: rgba(255, 50, 50, 0.1);
+  border: 1px solid rgba(255, 50, 50, 0.3);
+  color: #ffaaaa;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+  flex: 1;
+}
+
+.reset-key-btn:hover {
+  background: rgba(255, 50, 50, 0.3);
+  color: #fff;
+}
+
+.save-close-btn {
+  flex: 2;
+  margin-top: 0;
+}
+

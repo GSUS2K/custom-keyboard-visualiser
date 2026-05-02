@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef, createContext, useContext } from 'react';
 import './index.css';
 
-export const KeyboardConfigContext = createContext<Record<string, { bg?: string, text?: string, sound?: string, label?: string, synth?: { freq: number, pitchVarMultiplier: number, gainMultiplier: number, q: number } }>>({});
+export const KeyboardConfigContext = createContext<{ buildMode: boolean, config: Record<string, { bg?: string, text?: string, sound?: string, label?: string, span?: number, hidden?: boolean, synth?: { freq: number, pitchVarMultiplier: number, gainMultiplier: number, q: number } }> }>({ buildMode: false, config: {} });
 
 // Reusable Audio Context and Analyser
 let audioCtx: AudioContext | null = null;
@@ -162,19 +162,24 @@ const generateQuote = (wordCount: number) => {
 }
 
 const Key = ({ label, subLabel, span = 4, className = '', keyCode, activeKeys, onManualPress }: any) => {
-  const configMap = useContext(KeyboardConfigContext);
-  const keyConfig = configMap[keyCode] || {};
+  const { buildMode, config } = useContext(KeyboardConfigContext);
+  const keyConfig = config[keyCode] || {};
+
+  const customSpan = keyConfig.span !== undefined ? keyConfig.span : span;
+
+  if (keyConfig.hidden && !buildMode) return <div style={{ gridColumn: `span ${customSpan}`, visibility: 'hidden' }} />;
+
   const isPressed = activeKeys.has(keyCode);
   
   const customBg = keyConfig.bg;
   const customColor = keyConfig.text;
-  const displayLabel = keyConfig.label !== undefined ? keyConfig.label : label;
+  const displayLabel = (keyConfig.label !== undefined && keyConfig.label !== '') ? keyConfig.label : label;
 
   return (
     <div 
-      className={`key ${className} ${isPressed ? 'active' : ''}`}
+      className={`key ${className} ${isPressed ? 'active' : ''} ${keyConfig.hidden ? 'hidden-key-builder' : ''}`}
       style={{ 
-        gridColumn: `span ${span}`,
+        gridColumn: `span ${customSpan}`,
         ...(customBg ? { background: customBg, borderColor: customBg } : {}),
         ...(customColor ? { color: customColor } : {})
       }}
@@ -535,7 +540,7 @@ function App() {
   // Build Mode
   const [buildMode, setBuildMode] = useState(false);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
-  const [keyConfig, setKeyConfig] = useState<Record<string, { bg?: string, text?: string, sound?: string, label?: string, synth?: { freq: number, pitchVarMultiplier: number, gainMultiplier: number, q: number } }>>({});
+  const [keyConfig, setKeyConfig] = useState<Record<string, { bg?: string, text?: string, sound?: string, label?: string, span?: number, hidden?: boolean, synth?: { freq: number, pitchVarMultiplier: number, gainMultiplier: number, q: number } }>>({});
 
   // UI
   const [showSettings, setShowSettings] = useState(true);
@@ -992,6 +997,27 @@ function App() {
               </div>
               
               <div className="builder-row">
+                <label>Key Width (Span)</label>
+                <input 
+                  type="number" min="1" max="24"
+                  value={keyConfig[selectedKey]?.span || ''}
+                  onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], span: e.target.value ? parseInt(e.target.value) : undefined } }))}
+                  placeholder="Default"
+                  style={{ width: '100px', textAlign: 'right', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', padding: '0.6rem 1rem', borderRadius: '8px' }}
+                />
+              </div>
+
+              <div className="builder-row">
+                <label>Key Visibility</label>
+                <button 
+                  className={`visibility-btn ${keyConfig[selectedKey]?.hidden ? 'hidden-active' : ''}`}
+                  onClick={() => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], hidden: !prev[selectedKey]?.hidden } }))}
+                >
+                  {keyConfig[selectedKey]?.hidden ? '🚫 Hidden' : '👁️ Visible'}
+                </button>
+              </div>
+
+              <div className="builder-row">
                 <label>Keycap Color</label>
                 <div className="color-picker-wrapper">
                   <input 
@@ -1095,12 +1121,20 @@ function App() {
               )}
             </div>
             
-            <button 
-              className="save-close-btn" 
-              onClick={() => setSelectedKey(null)}
-            >
-              💾 Save & Close
-            </button>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem', gap: '1rem' }}>
+              <button 
+                className="reset-key-btn" 
+                onClick={() => setKeyConfig(prev => { const next = {...prev}; delete next[selectedKey]; return next; })}
+              >
+                🗑️ Reset Key
+              </button>
+              <button 
+                className="save-close-btn" 
+                onClick={() => setSelectedKey(null)}
+              >
+                💾 Save & Close
+              </button>
+            </div>
           </div>
         )}
 
@@ -1111,7 +1145,7 @@ function App() {
             {keyboardType !== '40' && <div className="led active" title="Connection"></div>}
           </div>
 
-          <KeyboardConfigContext.Provider value={keyConfig}>
+          <KeyboardConfigContext.Provider value={{ buildMode, config: keyConfig }}>
             {keyboardType === '40' && <Keyboard40 activeKeys={activeKeys} onManualPress={handleManualPress} />}
             {keyboardType === '60' && <Keyboard60 activeKeys={activeKeys} onManualPress={handleManualPress} />}
             {keyboardType === '65' && <Keyboard65 activeKeys={activeKeys} onManualPress={handleManualPress} />}
