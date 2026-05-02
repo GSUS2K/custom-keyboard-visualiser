@@ -505,6 +505,7 @@ function App() {
   const [cpm, setCpm] = useState(0);
   const [accuracy, setAccuracy] = useState(100);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const sandboxCursorRef = useRef<HTMLSpanElement>(null);
 
   // UI
   const [showSettings, setShowSettings] = useState(true);
@@ -518,6 +519,12 @@ function App() {
   useEffect(() => {
     typedRef.current = operationMode === 'race' ? typed : sandboxText;
   }, [typed, sandboxText, operationMode]);
+
+  useEffect(() => {
+    if (operationMode === 'sandbox' && sandboxCursorRef.current) {
+      sandboxCursorRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [sandboxText, operationMode]);
 
   const startNewGame = useCallback((targetWords: number = wordCountTarget) => {
     setWordCountTarget(targetWords);
@@ -854,7 +861,7 @@ function App() {
             <div className="sandbox-viewport">
               <div className="sandbox-text">
                 {sandboxText || <span className="sandbox-placeholder">Start typing freely...</span>}
-                <span className="sandbox-cursor"></span>
+                <span className="sandbox-cursor" ref={sandboxCursorRef}></span>
               </div>
             </div>
           </div>
