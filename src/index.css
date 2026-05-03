@@ -1286,10 +1286,10 @@ body.hide-keycaps .key.active::after {
   top: 50%;
   right: 2rem;
   transform: translateY(-50%);
-  background: rgba(15, 15, 20, 0.75);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(10, 10, 12, 0.98);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-top: 1px solid rgba(255, 255, 255, 0.2);
   padding: 2rem;
   border-radius: 24px;
@@ -1358,6 +1358,7 @@ body.hide-keycaps .key.active::after {
   font-size: 0.95rem;
   font-weight: 500;
   color: #ccc;
+  white-space: nowrap;
 }
 
 .builder-row input[type="text"] {

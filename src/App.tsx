@@ -577,7 +577,13 @@ function App() {
       sandboxCursorRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }, [sandboxText, operationMode]);
+  useEffect(() => {
+    if (selectedKey) setShowSettings(false);
+  }, [selectedKey]);
 
+  useEffect(() => {
+    if (showSettings) setSelectedKey(null);
+  }, [showSettings]);
   const startNewGame = useCallback((targetWords: number = wordCountTarget) => {
     setWordCountTarget(targetWords);
     setQuote(generateQuote(targetWords));
