@@ -957,259 +957,189 @@ function App() {
           </div>
         </div>
 
-        <div className="dashboard">
-          <div className="stat-box">
-            <span className="stat-value">{timeElapsed}s</span>
-            <span className="stat-label">Time</span>
-          </div>
-          <div className="stat-box">
-            <span className="stat-value">{wpm}</span>
-            <span className="stat-label">WPM</span>
-          </div>
-          <div className="stat-box visualizer-box">
-            <canvas ref={canvasRef} width="200" height="40" className="visualizer"></canvas>
-            <span className="stat-label">Acoustic Waveform</span>
-          </div>
-          <div className="stat-box">
-            <span className="stat-value">{cpm}</span>
-            <span className="stat-label">CPM</span>
-          </div>
-          <div className="stat-box">
-            <span className="stat-value">{accuracy}%</span>
-            <span className="stat-label">Accuracy</span>
-          </div>
-        </div>
-
-        {operationMode === 'race' ? (
-          <div className={`typeracer-container ${gameFinished ? 'finished' : ''}`}>
-            <div className="typeracer-header">
-              <div className="game-modes">
-                <button className={wordCountTarget === 10 ? 'active' : ''} onClick={(e) => { startNewGame(10); e.currentTarget.blur(); }}>10</button>
-                <button className={wordCountTarget === 20 ? 'active' : ''} onClick={(e) => { startNewGame(20); e.currentTarget.blur(); }}>20</button>
-                <button className={wordCountTarget === 50 ? 'active' : ''} onClick={(e) => { startNewGame(50); e.currentTarget.blur(); }}>50</button>
-                <button className={wordCountTarget === 100 ? 'active' : ''} onClick={(e) => { startNewGame(100); e.currentTarget.blur(); }}>100</button>
+        {!(buildMode && selectedKey) ? (
+          <>
+            <div className="dashboard">
+              <div className="stat-box">
+                <span className="stat-value">{timeElapsed}s</span>
+                <span className="stat-label">Time</span>
               </div>
-              <button className="restart-btn" onClick={(e) => { startNewGame(); e.currentTarget.blur(); addToast('Race restarted', 'info'); }} title="Restart Test"><RotateCcw size={16} /></button>
+              <div className="stat-box">
+                <span className="stat-value">{wpm}</span>
+                <span className="stat-label">WPM</span>
+              </div>
+              <div className="stat-box visualizer-box">
+                <canvas ref={canvasRef} width="200" height="40" className="visualizer"></canvas>
+                <span className="stat-label">Acoustic Waveform</span>
+              </div>
+              <div className="stat-box">
+                <span className="stat-value">{cpm}</span>
+                <span className="stat-label">CPM</span>
+              </div>
+              <div className="stat-box">
+                <span className="stat-value">{accuracy}%</span>
+                <span className="stat-label">Accuracy</span>
+              </div>
+            </div>
+
+            {operationMode === 'race' ? (
+              <div className={`typeracer-container ${gameFinished ? 'finished' : ''}`}>
+                <div className="typeracer-header">
+                  <div className="game-modes">
+                    <button className={wordCountTarget === 10 ? 'active' : ''} onClick={(e) => { startNewGame(10); e.currentTarget.blur(); }}>10</button>
+                    <button className={wordCountTarget === 20 ? 'active' : ''} onClick={(e) => { startNewGame(20); e.currentTarget.blur(); }}>20</button>
+                    <button className={wordCountTarget === 50 ? 'active' : ''} onClick={(e) => { startNewGame(50); e.currentTarget.blur(); }}>50</button>
+                    <button className={wordCountTarget === 100 ? 'active' : ''} onClick={(e) => { startNewGame(100); e.currentTarget.blur(); }}>100</button>
+                  </div>
+                  <button className="restart-btn" onClick={(e) => { startNewGame(); e.currentTarget.blur(); addToast('Race restarted', 'info'); }} title="Restart Test"><RotateCcw size={16} /></button>
+                </div>
+                
+                <div className="typeracer-viewport">
+                  <div className="typeracer-text" style={{ transform: `translateX(calc(${typed.length} * -1ch))` }}>
+                    {renderTextWords()}
+                  </div>
+                  {gameFinished && (
+                    <div className="typeracer-finish">
+                      <h3>Test Completed!</h3>
+                      <p>Press <kbd>Enter</kbd> or click <RotateCcw size={14} style={{display: 'inline', verticalAlign: 'middle', margin: '0 4px'}} /> Restart to try again.</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="sandbox-container">
+                <div className="sandbox-header">
+                  <div className="sandbox-title" style={{ display: 'flex', alignItems: 'center' }}>
+                    <Edit3 size={18} style={{ marginRight: '8px' }} /> Freeplay Sandbox
+                  </div>
+                  <button className="restart-btn" style={{ display: 'flex', alignItems: 'center', gap: '6px' }} onClick={(e) => { setSandboxText(''); setGameActive(false); setWpm(0); setCpm(0); setTimeElapsed(0); startTime.current = null; e.currentTarget.blur(); addToast('Sandbox cleared', 'info'); }} title="Clear Text">
+                    <RotateCcw size={14} /> Clear
+                  </button>
+                </div>
+                <div className="sandbox-viewport">
+                  <div className="sandbox-text">
+                    {sandboxText || <span className="sandbox-placeholder">Start typing freely...</span>}
+                    <span className="sandbox-cursor" ref={sandboxCursorRef}></span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="key-builder-dashboard">
+            <div className="kbd-header">
+              <div className="kbd-title">
+                <Edit3 size={24} style={{ color: 'var(--accent-color)' }} />
+                <div>
+                  <h2>Editing Key: {selectedKey.replace('Key', '').replace('Digit', '')}</h2>
+                  <p>Customize visuals, span, and acoustic signature.</p>
+                </div>
+              </div>
+              <div className="kbd-actions">
+                <button 
+                  className={`reset-key-btn ${confirmRevert ? 'confirming' : ''}`} 
+                  onClick={(e) => {
+                    if (!confirmRevert) {
+                      setConfirmRevert(true);
+                      setTimeout(() => setConfirmRevert(false), 3000);
+                    } else {
+                      setKeyConfig({});
+                      setSelectedKey(null);
+                      setConfirmRevert(false);
+                      addToast('All custom key overrides reverted.', 'success');
+                    }
+                    e.currentTarget.blur();
+                  }}
+                >
+                  <RotateCcw size={16} /> {confirmRevert ? 'Click to confirm revert' : 'Revert All'}
+                </button>
+                <button 
+                  className="reset-key-btn" 
+                  onClick={() => { setKeyConfig(prev => { const next = {...prev}; delete next[selectedKey]; return next; }); addToast('Key configuration reset', 'info'); }}
+                >
+                  <Trash2 size={16} /> Reset Key
+                </button>
+                <button 
+                  className="save-close-btn" 
+                  style={{ flex: 'none', margin: 0, padding: '0.8rem 2rem' }}
+                  onClick={() => setSelectedKey(null)}
+                >
+                  <Save size={18} style={{ marginRight: '0.5rem', display: 'inline' }} /> Done
+                </button>
+              </div>
             </div>
             
-            <div className="typeracer-viewport">
-              <div className="typeracer-text" style={{ transform: `translateX(calc(${typed.length} * -1ch))` }}>
-                {renderTextWords()}
-              </div>
-              {gameFinished && (
-                <div className="typeracer-finish">
-                  <h3>Test Completed!</h3>
-                  <p>Press <kbd>Enter</kbd> or click <RotateCcw size={14} style={{display: 'inline', verticalAlign: 'middle', margin: '0 4px'}} /> Restart to try again.</p>
-                </div>
-              )}
-            </div>
-          </div>
-        ) : (
-          <div className="sandbox-container">
-            <div className="sandbox-header">
-              <div className="sandbox-title" style={{ display: 'flex', alignItems: 'center' }}>
-                <Edit3 size={18} style={{ marginRight: '8px' }} /> Freeplay Sandbox
-              </div>
-              <button className="restart-btn" style={{ display: 'flex', alignItems: 'center', gap: '6px' }} onClick={(e) => { setSandboxText(''); setGameActive(false); setWpm(0); setCpm(0); setTimeElapsed(0); startTime.current = null; e.currentTarget.blur(); addToast('Sandbox cleared', 'info'); }} title="Clear Text">
-                <RotateCcw size={14} /> Clear
-              </button>
-            </div>
-            <div className="sandbox-viewport">
-              <div className="sandbox-text">
-                {sandboxText || <span className="sandbox-placeholder">Start typing freely...</span>}
-                <span className="sandbox-cursor" ref={sandboxCursorRef}></span>
-              </div>
+            <div className="kbd-grid">
+               <div className="kbd-col">
+                 <h4>Visual Identity</h4>
+                 <div className="builder-row">
+                   <label>Custom Label</label>
+                   <input type="text" maxLength={5} value={keyConfig[selectedKey]?.label || ''} onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], label: e.target.value } }))} placeholder="Default" />
+                 </div>
+                 <div className="builder-row">
+                   <label>Key Width (Span)</label>
+                   <input type="number" min="1" max="24" value={keyConfig[selectedKey]?.span || ''} onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], span: e.target.value ? parseInt(e.target.value) : undefined } }))} placeholder="Default" style={{ width: '100px', textAlign: 'right', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', padding: '0.6rem 1rem', borderRadius: '8px' }} />
+                 </div>
+                 <div className="builder-row">
+                   <label>Key Visibility</label>
+                   <button className={`visibility-btn ${keyConfig[selectedKey]?.hidden ? 'hidden-active' : ''}`} onClick={() => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], hidden: !prev[selectedKey]?.hidden } }))}>
+                     {keyConfig[selectedKey]?.hidden ? <><EyeOff size={16} /> Hidden</> : <><Eye size={16} /> Visible</>}
+                   </button>
+                 </div>
+               </div>
+
+               <div className="kbd-col">
+                 <h4>Aesthetics</h4>
+                 <div className="builder-row">
+                   <label>Keycap Color</label>
+                   <div className="color-picker-wrapper">
+                     <input type="color" value={keyConfig[selectedKey]?.bg || '#ffffff'} onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], bg: e.target.value } }))} />
+                     <button className="clear-color-btn" title="Reset Color" onClick={() => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], bg: undefined } }))}><RotateCcw size={14} /></button>
+                   </div>
+                 </div>
+                 <div className="builder-row">
+                   <label>Text Color</label>
+                   <div className="color-picker-wrapper">
+                     <input type="color" value={keyConfig[selectedKey]?.text || '#000000'} onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], text: e.target.value } }))} />
+                     <button className="clear-color-btn" title="Reset Color" onClick={() => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], text: undefined } }))}><RotateCcw size={14} /></button>
+                   </div>
+                 </div>
+               </div>
+
+               <div className="kbd-col">
+                 <h4>Acoustics</h4>
+                 <div className="builder-row" style={{ flexDirection: 'column', alignItems: 'stretch', gap: '0.8rem' }}>
+                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                     <label>Switch Sound</label>
+                     <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                       <select value={keyConfig[selectedKey]?.sound || 'default'} onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], sound: e.target.value === 'default' ? undefined : e.target.value } }))}>
+                         <option value="default">Default Match</option>
+                         <option value="linear">Thocky Linear</option>
+                         <option value="tactile">Sharp Tactile</option>
+                         <option value="clicky">Loud Clicky</option>
+                         <option value="topre">Deep Topre</option>
+                         <option value="silent">Silent Linear</option>
+                         <option value="heavy_tactile">Massive Bump</option>
+                         <option value="custom">Custom Synth</option>
+                       </select>
+                       <button className="test-sound-btn" onClick={() => playTypingSound(keyConfig[selectedKey]?.sound || switchType, keyConfig[selectedKey]?.synth)} title="Test Acoustic Profile"><Volume2 size={16} /> Test</button>
+                     </div>
+                   </div>
+                   {keyConfig[selectedKey]?.sound === 'custom' && (
+                     <div className="custom-synth-controls">
+                       <div className="builder-row"><label>Base Freq</label><input type="range" min="100" max="2000" step="10" value={keyConfig[selectedKey]?.synth?.freq || 400} onChange={(e) => { const val = parseFloat(e.target.value); setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { pitchVarMultiplier: 1, gainMultiplier: 1, q: 1.2 }), freq: val } } })); playTypingSound('custom', { ...(keyConfig[selectedKey]?.synth || { pitchVarMultiplier: 1, gainMultiplier: 1, q: 1.2 }), freq: val }); }} /></div>
+                       <div className="builder-row"><label>Pitch Bend</label><input type="range" min="0.5" max="2.0" step="0.1" value={keyConfig[selectedKey]?.synth?.pitchVarMultiplier || 1.0} onChange={(e) => { const val = parseFloat(e.target.value); setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { freq: 400, gainMultiplier: 1, q: 1.2 }), pitchVarMultiplier: val } } })); playTypingSound('custom', { ...(keyConfig[selectedKey]?.synth || { freq: 400, gainMultiplier: 1, q: 1.2 }), pitchVarMultiplier: val }); }} /></div>
+                       <div className="builder-row"><label>Gain</label><input type="range" min="0.1" max="3.0" step="0.1" value={keyConfig[selectedKey]?.synth?.gainMultiplier || 1.0} onChange={(e) => { const val = parseFloat(e.target.value); setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { freq: 400, pitchVarMultiplier: 1, q: 1.2 }), gainMultiplier: val } } })); playTypingSound('custom', { ...(keyConfig[selectedKey]?.synth || { freq: 400, pitchVarMultiplier: 1, q: 1.2 }), gainMultiplier: val }); }} /></div>
+                       <div className="builder-row"><label>Resonance</label><input type="range" min="0.1" max="5.0" step="0.1" value={keyConfig[selectedKey]?.synth?.q || 1.2} onChange={(e) => { const val = parseFloat(e.target.value); setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { freq: 400, pitchVarMultiplier: 1, gainMultiplier: 1 }), q: val } } })); playTypingSound('custom', { ...(keyConfig[selectedKey]?.synth || { freq: 400, pitchVarMultiplier: 1, gainMultiplier: 1 }), q: val }); }} /></div>
+                     </div>
+                   )}
+                 </div>
+               </div>
             </div>
           </div>
         )}
         
-        {buildMode && selectedKey && (
-          <div className="key-builder-modal">
-            <div className="modal-header">
-              <h3>Editing: {selectedKey.replace('Key', '').replace('Digit', '')}</h3>
-              <button className="close-btn" onClick={() => setSelectedKey(null)}><X size={20} /></button>
-            </div>
-            
-            <div className="modal-body">
-              <div className="builder-row">
-                <label>Custom Label</label>
-                <input 
-                  type="text" 
-                  maxLength={5} 
-                  value={keyConfig[selectedKey]?.label || ''} 
-                  onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], label: e.target.value } }))}
-                  placeholder="Default"
-                />
-              </div>
-              
-              <div className="builder-row">
-                <label>Key Width (Span)</label>
-                <input 
-                  type="number" min="1" max="24"
-                  value={keyConfig[selectedKey]?.span || ''}
-                  onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], span: e.target.value ? parseInt(e.target.value) : undefined } }))}
-                  placeholder="Default"
-                  style={{ width: '100px', textAlign: 'right', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', padding: '0.6rem 1rem', borderRadius: '8px' }}
-                />
-              </div>
 
-              <div className="builder-row">
-                <label>Key Visibility</label>
-                <button 
-                  className={`visibility-btn ${keyConfig[selectedKey]?.hidden ? 'hidden-active' : ''}`}
-                  onClick={() => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], hidden: !prev[selectedKey]?.hidden } }))}
-                >
-                  {keyConfig[selectedKey]?.hidden ? <><EyeOff size={16} /> Hidden</> : <><Eye size={16} /> Visible</>}
-                </button>
-              </div>
-
-              <div className="builder-row">
-                <label>Keycap Color</label>
-                <div className="color-picker-wrapper">
-                  <input 
-                    type="color" 
-                    value={keyConfig[selectedKey]?.bg || '#ffffff'} 
-                    onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], bg: e.target.value } }))}
-                  />
-                  <button className="clear-color-btn" title="Reset Color" onClick={() => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], bg: undefined } }))}><RotateCcw size={14} /></button>
-                </div>
-              </div>
-
-              <div className="builder-row">
-                <label>Text Color</label>
-                <div className="color-picker-wrapper">
-                  <input 
-                    type="color" 
-                    value={keyConfig[selectedKey]?.text || '#000000'} 
-                    onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], text: e.target.value } }))}
-                  />
-                  <button className="clear-color-btn" title="Reset Color" onClick={() => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], text: undefined } }))}><RotateCcw size={14} /></button>
-                </div>
-              </div>
-
-              <div className="builder-row" style={{ marginTop: '0.5rem' }}>
-                <label>Switch Sound</label>
-                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                  <select 
-                    value={keyConfig[selectedKey]?.sound || 'default'} 
-                    onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], sound: e.target.value === 'default' ? undefined : e.target.value } }))}
-                  >
-                    <option value="default">Default Match</option>
-                    <option value="linear">Thocky Linear</option>
-                    <option value="tactile">Sharp Tactile</option>
-                    <option value="clicky">Loud Clicky</option>
-                    <option value="topre">Deep Topre</option>
-                    <option value="silent">Silent Linear</option>
-                    <option value="heavy_tactile">Massive Bump</option>
-                    <option value="custom">Custom Synth</option>
-                  </select>
-                  <button 
-                    className="test-sound-btn" 
-                    onClick={() => playTypingSound(keyConfig[selectedKey]?.sound || switchType, keyConfig[selectedKey]?.synth)}
-                    title="Test Acoustic Profile"
-                  >
-                    <Volume2 size={16} /> Test
-                  </button>
-                </div>
-              </div>
-
-              {keyConfig[selectedKey]?.sound === 'custom' && (
-                <div className="custom-synth-controls">
-                  <div className="builder-row">
-                    <label>Base Freq (Hz)</label>
-                    <input 
-                      type="range" min="100" max="2000" step="10" 
-                      value={keyConfig[selectedKey]?.synth?.freq || 400} 
-                      onChange={(e) => {
-                        const val = parseFloat(e.target.value);
-                        setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { pitchVarMultiplier: 1, gainMultiplier: 1, q: 1.2 }), freq: val } } }));
-                        playTypingSound('custom', { ...(keyConfig[selectedKey]?.synth || { pitchVarMultiplier: 1, gainMultiplier: 1, q: 1.2 }), freq: val });
-                      }}
-                    />
-                  </div>
-                  <div className="builder-row">
-                    <label>Pitch Bend</label>
-                    <input 
-                      type="range" min="0.5" max="2.0" step="0.1" 
-                      value={keyConfig[selectedKey]?.synth?.pitchVarMultiplier || 1.0} 
-                      onChange={(e) => {
-                        const val = parseFloat(e.target.value);
-                        setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { freq: 400, gainMultiplier: 1, q: 1.2 }), pitchVarMultiplier: val } } }));
-                        playTypingSound('custom', { ...(keyConfig[selectedKey]?.synth || { freq: 400, gainMultiplier: 1, q: 1.2 }), pitchVarMultiplier: val });
-                      }}
-                    />
-                  </div>
-                  <div className="builder-row">
-                    <label>Gain (Volume)</label>
-                    <input 
-                      type="range" min="0.1" max="3.0" step="0.1" 
-                      value={keyConfig[selectedKey]?.synth?.gainMultiplier || 1.0} 
-                      onChange={(e) => {
-                        const val = parseFloat(e.target.value);
-                        setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { freq: 400, pitchVarMultiplier: 1, q: 1.2 }), gainMultiplier: val } } }));
-                        playTypingSound('custom', { ...(keyConfig[selectedKey]?.synth || { freq: 400, pitchVarMultiplier: 1, q: 1.2 }), gainMultiplier: val });
-                      }}
-                    />
-                  </div>
-                  <div className="builder-row">
-                    <label>Resonance (Q)</label>
-                    <input 
-                      type="range" min="0.1" max="5.0" step="0.1" 
-                      value={keyConfig[selectedKey]?.synth?.q || 1.2} 
-                      onChange={(e) => {
-                        const val = parseFloat(e.target.value);
-                        setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { freq: 400, pitchVarMultiplier: 1, gainMultiplier: 1 }), q: val } } }));
-                        playTypingSound('custom', { ...(keyConfig[selectedKey]?.synth || { freq: 400, pitchVarMultiplier: 1, gainMultiplier: 1 }), q: val });
-                      }}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-            
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem', gap: '1rem' }}>
-              <button 
-                className="reset-key-btn" 
-                onClick={() => { setKeyConfig(prev => { const next = {...prev}; delete next[selectedKey]; return next; }); addToast('Key configuration reset', 'info'); }}
-              >
-                <Trash2 size={16} /> Reset Key
-              </button>
-              <button 
-                className="save-close-btn" 
-                onClick={() => setSelectedKey(null)}
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
-              >
-                <Save size={18} /> Confirm
-              </button>
-            </div>
-            <button 
-              className={`reset-key-btn ${confirmRevert ? 'confirming' : ''}`} 
-              style={{ 
-                width: '100%', 
-                marginTop: '0.8rem', 
-                background: confirmRevert ? 'rgba(239, 68, 68, 0.15)' : 'transparent', 
-                border: '1px solid #ef4444', 
-                color: '#ef4444',
-                transition: 'all 0.2s',
-                padding: '0.8rem'
-              }}
-              onClick={(e) => {
-                if (!confirmRevert) {
-                  setConfirmRevert(true);
-                  setTimeout(() => setConfirmRevert(false), 3000);
-                } else {
-                  setKeyConfig({});
-                  setSelectedKey(null);
-                  setConfirmRevert(false);
-                  addToast('All custom key overrides reverted.', 'success');
-                }
-                e.currentTarget.blur();
-              }}
-            >
-              <RotateCcw size={16} /> {confirmRevert ? 'Click again to confirm revert' : 'Revert All Key Changes'}
-            </button>
-          </div>
-        )}
 
         <div className={`keyboard-chassis ${viewAngle === 'flat' ? 'flat-view' : ''} ${buildMode ? 'build-mode-active' : ''}`}>
           <div className="status-leds">
