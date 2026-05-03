@@ -1256,9 +1256,22 @@ body.hide-keycaps .key.active::after {
   box-shadow: 0 0 15px rgba(253, 251, 0, 0.4);
 }
 
-.build-mode-active {
-  box-shadow: 0 15px 0 rgba(253, 251, 0, 0.4), 0 0 50px rgba(253, 251, 0, 0.1) !important;
-  border: 2px dashed #fdfb00 !important;
+.keyboard-chassis.build-mode-active {
+  box-shadow: 0 15px 0 rgba(253, 251, 0, 0.4), 0 0 50px rgba(253, 251, 0, 0.3) !important;
+}
+
+.keyboard-chassis:not(.flat-view) .key.selected-for-edit {
+  transform: translateZ(50px) scale(1.1) !important;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 30px rgba(253, 251, 0, 0.6) !important;
+  border: 1px solid #fdfb00 !important;
+  z-index: 100 !important;
+}
+
+.keyboard-chassis.flat-view .key.selected-for-edit {
+  transform: scale(1.1) !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 30px rgba(253, 251, 0, 0.6) !important;
+  border: 1px solid #fdfb00 !important;
+  z-index: 100 !important;
 }
 
 .build-mode-active .key:hover {
@@ -1269,23 +1282,29 @@ body.hide-keycaps .key.active::after {
 }
 
 .key-builder-modal {
-  position: absolute;
+  position: fixed;
   top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(15, 15, 20, 0.98);
-  backdrop-filter: blur(20px);
+  right: 2rem;
+  transform: translateY(-50%);
+  background: rgba(15, 15, 20, 0.75);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-top: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 2.5rem;
-  border-radius: 20px;
+  padding: 2rem;
+  border-radius: 24px;
   z-index: 2000;
-  width: 440px;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.9), 0 0 40px rgba(255, 255, 255, 0.05);
+  width: 400px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 40px rgba(255, 255, 255, 0.05);
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
-  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translate(50px, -50%); }
+  to { opacity: 1; transform: translate(0, -50%); }
 }
 
 .modal-header {

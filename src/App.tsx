@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef, createContext, useContext } f
 import { RotateCcw, Volume2, Save, X, Trash2, Eye, EyeOff, Download, Upload, Edit3, Settings, Sparkles, Keyboard as KeyboardIcon, Box, Flag, Wrench } from 'lucide-react';
 import './index.css';
 
-export const KeyboardConfigContext = createContext<{ buildMode: boolean, config: Record<string, { bg?: string, text?: string, sound?: string, label?: string, span?: number, hidden?: boolean, synth?: { freq: number, pitchVarMultiplier: number, gainMultiplier: number, q: number } }>, osLayout: 'windows' | 'mac' | 'linux' }>({ buildMode: false, config: {}, osLayout: 'windows' });
+export const KeyboardConfigContext = createContext<{ buildMode: boolean, selectedKey: string | null, config: Record<string, { bg?: string, text?: string, sound?: string, label?: string, span?: number, hidden?: boolean, synth?: { freq: number, pitchVarMultiplier: number, gainMultiplier: number, q: number } }>, osLayout: 'windows' | 'mac' | 'linux' }>({ buildMode: false, selectedKey: null, config: {}, osLayout: 'windows' });
 
 // Reusable Audio Context and Analyser
 let audioCtx: AudioContext | null = null;
@@ -163,7 +163,7 @@ const generateQuote = (wordCount: number) => {
 }
 
 const Key = ({ label, subLabel, keyCode, span = 4, className = '', activeKeys, onManualPress }: any) => {
-  const { buildMode, config, osLayout } = useContext(KeyboardConfigContext);
+  const { buildMode, selectedKey, config, osLayout } = useContext(KeyboardConfigContext);
   
   let displayLabel = label;
   if (keyCode === 'MetaLeft' || keyCode === 'MetaRight') {
@@ -186,7 +186,7 @@ const Key = ({ label, subLabel, keyCode, span = 4, className = '', activeKeys, o
 
   return (
     <div 
-      className={`key ${className} ${isPressed ? 'active' : ''} ${conf.hidden ? 'hidden-key-builder' : ''}`}
+      className={`key ${className} ${isPressed ? 'active' : ''} ${conf.hidden ? 'hidden-key-builder' : ''} ${selectedKey === keyCode ? 'selected-for-edit' : ''}`}
       style={customStyle}
       onMouseDown={() => onManualPress(keyCode)}
     >
@@ -565,6 +565,7 @@ function App() {
   const [showKeycaps, setShowKeycaps] = useState(true);
   const [viewAngle, setViewAngle] = useState<'3d' | 'flat'>('3d');
   const [particlesEnabled, setParticlesEnabled] = useState(true);
+  const [confirmRevert, setConfirmRevert] = useState(false);
   const [particles, setParticles] = useState<{id: number, char: string, x: number}[]>([]);
 
   useEffect(() => {
@@ -599,10 +600,7 @@ function App() {
       return;
     }
 
-    if (e.key === 'Escape' && showSettings) {
-      setShowSettings(false);
-      return;
-    }
+    // Let Escape pass through to test the key
 
     // Prevent global key capture if the user is typing in an input/select
     if (
@@ -1179,18 +1177,30 @@ function App() {
               </button>
             </div>
             <button 
-              className="reset-key-btn" 
-              style={{ width: '100%', marginTop: '0.8rem', background: 'transparent', border: '1px solid #ef4444', color: '#ef4444' }}
+              className={`reset-key-btn ${confirmRevert ? 'confirming' : ''}`} 
+              style={{ 
+                width: '100%', 
+                marginTop: '0.8rem', 
+                background: confirmRevert ? 'rgba(239, 68, 68, 0.15)' : 'transparent', 
+                border: '1px solid #ef4444', 
+                color: '#ef4444',
+                transition: 'all 0.2s',
+                padding: '0.8rem'
+              }}
               onClick={(e) => {
-                if (window.confirm('Are you sure you want to revert ALL custom key designs on this board?')) {
+                if (!confirmRevert) {
+                  setConfirmRevert(true);
+                  setTimeout(() => setConfirmRevert(false), 3000);
+                } else {
                   setKeyConfig({});
                   setSelectedKey(null);
+                  setConfirmRevert(false);
                   addToast('All custom key overrides reverted.', 'success');
                 }
                 e.currentTarget.blur();
               }}
             >
-              <RotateCcw size={16} /> Revert All Key Changes
+              <RotateCcw size={16} /> {confirmRevert ? 'Click again to confirm revert' : 'Revert All Key Changes'}
             </button>
           </div>
         )}
@@ -1202,7 +1212,7 @@ function App() {
             {keyboardType !== '40' && <div className="led active" title="Connection"></div>}
           </div>
 
-          <KeyboardConfigContext.Provider value={{ buildMode, config: keyConfig, osLayout }}>
+          <KeyboardConfigContext.Provider value={{ buildMode, selectedKey, config: keyConfig, osLayout }}>
             {keyboardType === '40' && <Keyboard40 activeKeys={activeKeys} onManualPress={handleManualPress} />}
             {keyboardType === '60' && <Keyboard60 activeKeys={activeKeys} onManualPress={handleManualPress} />}
             {keyboardType === '65' && <Keyboard65 activeKeys={activeKeys} onManualPress={handleManualPress} />}
