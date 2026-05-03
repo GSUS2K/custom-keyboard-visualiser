@@ -238,7 +238,7 @@ function Keyboard40({ activeKeys, onManualPress }: any) {
       <Key label="," subLabel="<" keyCode="Comma" activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="." subLabel=">" keyCode="Period" activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="/" subLabel="?" keyCode="Slash" activeKeys={activeKeys} onManualPress={onManualPress} />
-      <Key label="Shift" keyCode="ShiftRight" span={3} activeKeys={activeKeys} onManualPress={onManualPress} className="accent" />
+      <Key label="Shift" keyCode="ShiftRight" activeKeys={activeKeys} onManualPress={onManualPress} className="accent" />
 
       <Key label="Ctrl" keyCode="ControlLeft" activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="Win" keyCode="MetaLeft" activeKeys={activeKeys} onManualPress={onManualPress} />
@@ -593,6 +593,17 @@ function App() {
   }, [wordCountTarget]);
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === ',') {
+      e.preventDefault();
+      setShowSettings(prev => !prev);
+      return;
+    }
+
+    if (e.key === 'Escape' && showSettings) {
+      setShowSettings(false);
+      return;
+    }
+
     // Prevent global key capture if the user is typing in an input/select
     if (
       (e.target instanceof HTMLInputElement && !['file', 'checkbox', 'radio'].includes(e.target.type)) || 
@@ -1209,106 +1220,119 @@ function App() {
           <button className="close-btn" onClick={(e) => { setShowSettings(false); e.currentTarget.blur(); }}><X size={20} /></button>
         </div>
         
-        <div className="control-group">
-          <label>Global Features</label>
-          <div className="game-modes toggle-grid" style={{ width: '100%', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '8px' }}>
-            <button style={{flex: '1 1 40%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'}} className={soundEnabled ? 'active' : ''} onClick={(e) => { setSoundEnabled(!soundEnabled); e.currentTarget.blur(); }}><Volume2 size={16} /> Sound</button>
-            <button style={{flex: '1 1 40%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'}} className={particlesEnabled ? 'active' : ''} onClick={(e) => { setParticlesEnabled(!particlesEnabled); e.currentTarget.blur(); }}><Sparkles size={16} /> Particles</button>
-            <button style={{flex: '1 1 40%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'}} className={showKeycaps ? 'active' : ''} onClick={(e) => { setShowKeycaps(!showKeycaps); e.currentTarget.blur(); }}><KeyboardIcon size={16} /> Keycaps</button>
-            <button style={{flex: '1 1 40%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'}} className={viewAngle === '3d' ? 'active' : ''} onClick={(e) => { setViewAngle(viewAngle === '3d' ? 'flat' : '3d'); e.currentTarget.blur(); }}><Box size={16} /> 3D View</button>
-            <button style={{flex: '1 1 100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'}} className={`build-mode-btn ${buildMode ? 'active' : ''}`} onClick={(e) => { setBuildMode(!buildMode); setSelectedKey(null); e.currentTarget.blur(); }}><Wrench size={16} /> Key Builder Mode</button>
+        <div className="settings-section">
+          <h3>Interaction & Visuals</h3>
+          <div className="control-group">
+            <label>Global Features</label>
+            <div className="game-modes toggle-grid" style={{ width: '100%', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '8px' }}>
+              <button style={{flex: '1 1 40%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'}} className={soundEnabled ? 'active' : ''} onClick={(e) => { setSoundEnabled(!soundEnabled); e.currentTarget.blur(); }}><Volume2 size={16} /> Sound</button>
+              <button style={{flex: '1 1 40%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'}} className={particlesEnabled ? 'active' : ''} onClick={(e) => { setParticlesEnabled(!particlesEnabled); e.currentTarget.blur(); }}><Sparkles size={16} /> Particles</button>
+              <button style={{flex: '1 1 40%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'}} className={showKeycaps ? 'active' : ''} onClick={(e) => { setShowKeycaps(!showKeycaps); e.currentTarget.blur(); }}><KeyboardIcon size={16} /> Keycaps</button>
+              <button style={{flex: '1 1 40%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'}} className={viewAngle === '3d' ? 'active' : ''} onClick={(e) => { setViewAngle(viewAngle === '3d' ? 'flat' : '3d'); e.currentTarget.blur(); }}><Box size={16} /> 3D View</button>
+              <button style={{flex: '1 1 100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'}} className={`build-mode-btn ${buildMode ? 'active' : ''}`} onClick={(e) => { setBuildMode(!buildMode); setSelectedKey(null); e.currentTarget.blur(); }}><Wrench size={16} /> Key Builder</button>
+            </div>
+          </div>
+          
+          <div className="control-group">
+            <label>Operation Mode</label>
+            <div className="game-modes" style={{ width: '100%', marginBottom: '0.5rem' }}>
+              <button style={{flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'}} className={operationMode === 'race' ? 'active' : ''} onClick={(e) => { setOperationMode('race'); e.currentTarget.blur(); }}><Flag size={16} /> Race</button>
+              <button style={{flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'}} className={operationMode === 'sandbox' ? 'active' : ''} onClick={(e) => { setOperationMode('sandbox'); e.currentTarget.blur(); }}><Edit3 size={16} /> Sandbox</button>
+            </div>
+          </div>
+
+          <div className="control-group">
+            <label>RGB Lighting</label>
+            <select value={rgbMode} onChange={e => { setRgbMode(e.target.value); e.target.blur(); }}>
+              <option value="theme">Theme Default</option>
+              <option value="rainbow">Rainbow Wave</option>
+              <option value="breathe">Breathing Pulse</option>
+              <option value="reactive">Reactive Typing</option>
+            </select>
           </div>
         </div>
 
-        <div className="control-group">
-          <label>Operation Mode</label>
-          <div className="game-modes" style={{ width: '100%', marginBottom: '0.5rem' }}>
-            <button style={{flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'}} className={operationMode === 'race' ? 'active' : ''} onClick={(e) => { setOperationMode('race'); e.currentTarget.blur(); }}><Flag size={16} /> Race</button>
-            <button style={{flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'}} className={operationMode === 'sandbox' ? 'active' : ''} onClick={(e) => { setOperationMode('sandbox'); e.currentTarget.blur(); }}><Edit3 size={16} /> Sandbox</button>
+        <div className="settings-section">
+          <h3>Hardware Configuration</h3>
+          <div className="control-group">
+            <label>Real Keyboard Models</label>
+            <select value={preset} onChange={e => { setPreset(e.target.value); e.target.blur(); }} style={{ borderColor: 'var(--accent-color)' }}>
+              <option value="custom">-- Custom Build --</option>
+              <option value="wooting">Wooting 60HE (Linear)</option>
+              <option value="hhkb">HHKB Professional (Topre)</option>
+              <option value="keychron_q1">Keychron Q1 (Tactile)</option>
+              <option value="cyberboard">Angry Miao Cyberboard (Heavy Tactile)</option>
+              <option value="planck">Planck EZ Ortholinear (Clicky)</option>
+            </select>
+          </div>
+
+          <div className="control-group">
+            <label>OS Layout</label>
+            <select value={osLayout} onChange={(e) => setOsLayout(e.target.value as any)}>
+              <option value="windows">Windows</option>
+              <option value="mac">macOS</option>
+              <option value="linux">Linux</option>
+            </select>
+          </div>
+
+          <div className="control-group">
+            <label>Layout Size</label>
+            <select value={keyboardType} onChange={e => { setKeyboardType(e.target.value); setPreset('custom'); e.target.blur(); }}>
+              <option value="40">40% (Planck Ortho)</option>
+              <option value="60">60% (Standard)</option>
+              <option value="65">65% (Tofu65 Style)</option>
+              <option value="75">75% (AULA F75 Exploded)</option>
+            </select>
           </div>
         </div>
 
-        <div className="control-group">
-          <label>RGB Lighting</label>
-          <select value={rgbMode} onChange={e => { setRgbMode(e.target.value); e.target.blur(); }}>
-            <option value="theme">Theme Default</option>
-            <option value="rainbow">Rainbow Wave</option>
-            <option value="breathe">Breathing Pulse</option>
-            <option value="reactive">Reactive Typing</option>
-          </select>
+        <div className="settings-section">
+          <h3>Acoustics & Aesthetics</h3>
+          <div className="control-group">
+            <label>Switch Acoustic Profile</label>
+            <select value={switchType} onChange={e => { setSwitchType(e.target.value); setPreset('custom'); e.target.blur(); }}>
+              <option value="linear">Gateron Milky Yellow (Deep Creamy Thock)</option>
+              <option value="tactile">Holy Panda (Sharp Clack + Bump)</option>
+              <option value="clicky">Cherry MX Blue (High-Pitch Click Jacket)</option>
+              <option value="topre">Topre (Deep Electro-capacitive Thwomp)</option>
+              <option value="silent">Silent Alpaca (Muted Linear)</option>
+              <option value="heavy_tactile">Boba U4T (Massive Bump, Thocky)</option>
+            </select>
+          </div>
+          <div className="control-group">
+            <label>Keycap Profile</label>
+            <select value={profile} onChange={e => { setProfile(e.target.value); setPreset('custom'); e.target.blur(); }}>
+              <option value="cherry">Cherry (Sculpted)</option>
+              <option value="xda">XDA (Flat, Square)</option>
+              <option value="sa">SA (Tall, Spherical)</option>
+            </select>
+          </div>
+          <div className="control-group">
+            <label>Color Theme</label>
+            <select value={theme} onChange={e => { setTheme(e.target.value); setPreset('custom'); e.target.blur(); }}>
+              <option value="default">Dark Glass</option>
+              <option value="retro">Retro Beige 1984</option>
+              <option value="cyberpunk">Cyberpunk Neon</option>
+              <option value="vaporwave">Vaporwave Synth</option>
+              <option value="matcha">Matcha Green</option>
+              <option value="dracula">Dracula (Dark)</option>
+              <option value="arctic">Arctic Ice (Light)</option>
+            </select>
+          </div>
         </div>
 
-        <div className="control-group">
-          <label>Real Keyboard Models</label>
-          <select value={preset} onChange={e => { setPreset(e.target.value); e.target.blur(); }} style={{ borderColor: 'var(--accent-color)' }}>
-            <option value="custom">-- Custom Build --</option>
-            <option value="wooting">Wooting 60HE (Linear)</option>
-            <option value="hhkb">HHKB Professional (Topre)</option>
-            <option value="keychron_q1">Keychron Q1 (Tactile)</option>
-            <option value="cyberboard">Angry Miao Cyberboard (Heavy Tactile)</option>
-            <option value="planck">Planck EZ Ortholinear (Clicky)</option>
-          </select>
-        </div>
-
-        <div className="control-group">
-          <label>OS Layout</label>
-          <select value={osLayout} onChange={(e) => setOsLayout(e.target.value as any)}>
-            <option value="windows">Windows</option>
-            <option value="mac">macOS</option>
-            <option value="linux">Linux</option>
-          </select>
-        </div>
-
-        <div className="control-group">
-          <label>Layout Size</label>
-          <select value={keyboardType} onChange={e => { setKeyboardType(e.target.value); setPreset('custom'); e.target.blur(); }}>
-            <option value="40">40% (Planck Ortho)</option>
-            <option value="60">60% (Standard)</option>
-            <option value="65">65% (Tofu65 Style)</option>
-            <option value="75">75% (AULA F75 Exploded)</option>
-          </select>
-        </div>
-        <div className="control-group">
-          <label>Switch Acoustic Profile</label>
-          <select value={switchType} onChange={e => { setSwitchType(e.target.value); setPreset('custom'); e.target.blur(); }}>
-            <option value="linear">Gateron Milky Yellow (Deep Creamy Thock)</option>
-            <option value="tactile">Holy Panda (Sharp Clack + Bump)</option>
-            <option value="clicky">Cherry MX Blue (High-Pitch Click Jacket)</option>
-            <option value="topre">Topre (Deep Electro-capacitive Thwomp)</option>
-            <option value="silent">Silent Alpaca (Muted Linear)</option>
-            <option value="heavy_tactile">Boba U4T (Massive Bump, Thocky)</option>
-          </select>
-        </div>
-        <div className="control-group">
-          <label>Keycap Profile</label>
-          <select value={profile} onChange={e => { setProfile(e.target.value); setPreset('custom'); e.target.blur(); }}>
-            <option value="cherry">Cherry (Sculpted)</option>
-            <option value="xda">XDA (Flat, Square)</option>
-            <option value="sa">SA (Tall, Spherical)</option>
-          </select>
-        </div>
-        <div className="control-group">
-          <label>Color Theme</label>
-          <select value={theme} onChange={e => { setTheme(e.target.value); setPreset('custom'); e.target.blur(); }}>
-            <option value="default">Dark Glass</option>
-            <option value="retro">Retro Beige 1984</option>
-            <option value="cyberpunk">Cyberpunk Neon</option>
-            <option value="vaporwave">Vaporwave Synth</option>
-            <option value="matcha">Matcha Green</option>
-            <option value="dracula">Dracula (Dark)</option>
-            <option value="arctic">Arctic Ice (Light)</option>
-          </select>
-        </div>
-        <div className="control-group">
-          <label>Data Management</label>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', width: '100%' }}>
-            <button className="data-mgt-btn" onClick={handleExportProfile}>
-              <Download size={18} /> Export Profile
-            </button>
-            <button className="data-mgt-btn" style={{ position: 'relative' }}>
-              <Upload size={18} /> Import Profile
-              <input type="file" accept=".json" onChange={handleImportProfile} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }} />
-            </button>
+        <div className="settings-section">
+          <h3>Data Management</h3>
+          <div className="control-group">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', width: '100%' }}>
+              <button className="data-mgt-btn" onClick={handleExportProfile}>
+                <Download size={18} /> Export Profile
+              </button>
+              <button className="data-mgt-btn" style={{ position: 'relative' }}>
+                <Upload size={18} /> Import Profile
+                <input type="file" accept=".json" onChange={handleImportProfile} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }} />
+              </button>
+            </div>
           </div>
         </div>
       </div>
