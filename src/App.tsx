@@ -532,6 +532,17 @@ function App() {
   // Operation Mode
   const [operationMode, setOperationMode] = useState<'race' | 'sandbox'>('race');
   const [sandboxText, setSandboxText] = useState('');
+
+  // Toasts
+  const [toasts, setToasts] = useState<{ id: number, message: string, type?: 'success' | 'info' | 'error' }[]>([]);
+
+  const addToast = useCallback((message: string, type: 'success' | 'info' | 'error' = 'info') => {
+    const id = Date.now();
+    setToasts(prev => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== id));
+    }, 3000);
+  }, []);
   
   // Stats
   const [wpm, setWpm] = useState(0);
@@ -834,14 +845,15 @@ function App() {
   };
 
   const handleExportProfile = () => {
-    const profile = { keyboardType, switchType, theme, rgbMode, keyConfig };
-    const blob = new Blob([JSON.stringify(profile, null, 2)], { type: 'application/json' });
+    const exportData = { keyboardType, switchType, theme, rgbMode, profile, keyConfig };
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = 'keyboard-profile.json';
     a.click();
     URL.revokeObjectURL(url);
+    addToast('Profile exported successfully!', 'success');
   };
 
   const handleImportProfile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -869,19 +881,20 @@ function App() {
           if (typeof data.keyConfig === 'object' && !Array.isArray(data.keyConfig)) {
             setKeyConfig(data.keyConfig);
           } else {
-            console.error("[Keyboard Studio] Corrupted keyConfig object in profile.", data.keyConfig);
             throw new Error("Corrupted or invalid Key Configuration data.");
           }
         }
 
-        console.log("[Keyboard Studio] Successfully loaded profile!");
+        if (data.profile && typeof data.profile === 'string') setProfile(data.profile);
+        setPreset('custom');
+
+        addToast('Profile loaded successfully!', 'success');
       } catch (err: any) {
-        console.error("[Keyboard Studio] Error importing profile:", err);
-        alert(`Failed to import profile: ${err.message || 'Unknown error'}. Please make sure you are importing a valid keyboard-profile.json file.`);
+        addToast(`Import failed: ${err.message || 'Invalid format'}`, 'error');
       }
     };
     reader.onerror = () => {
-      alert("Failed to read the file.");
+      addToast("Failed to read the file.", "error");
     };
     reader.readAsText(file);
     e.target.value = '';
@@ -950,7 +963,7 @@ function App() {
                 <button className={wordCountTarget === 50 ? 'active' : ''} onClick={(e) => { startNewGame(50); e.currentTarget.blur(); }}>50</button>
                 <button className={wordCountTarget === 100 ? 'active' : ''} onClick={(e) => { startNewGame(100); e.currentTarget.blur(); }}>100</button>
               </div>
-              <button className="restart-btn" onClick={(e) => { startNewGame(); e.currentTarget.blur(); }} title="Restart Test"><RotateCcw size={16} /></button>
+              <button className="restart-btn" onClick={(e) => { startNewGame(); e.currentTarget.blur(); addToast('Race restarted', 'info'); }} title="Restart Test"><RotateCcw size={16} /></button>
             </div>
             
             <div className="typeracer-viewport">
@@ -971,7 +984,7 @@ function App() {
               <div className="sandbox-title" style={{ display: 'flex', alignItems: 'center' }}>
                 <Edit3 size={18} style={{ marginRight: '8px' }} /> Freeplay Sandbox
               </div>
-              <button className="restart-btn" style={{ display: 'flex', alignItems: 'center', gap: '6px' }} onClick={(e) => { setSandboxText(''); setGameActive(false); setWpm(0); setCpm(0); setTimeElapsed(0); startTime.current = null; e.currentTarget.blur(); }} title="Clear Text">
+              <button className="restart-btn" style={{ display: 'flex', alignItems: 'center', gap: '6px' }} onClick={(e) => { setSandboxText(''); setGameActive(false); setWpm(0); setCpm(0); setTimeElapsed(0); startTime.current = null; e.currentTarget.blur(); addToast('Sandbox cleared', 'info'); }} title="Clear Text">
                 <RotateCcw size={14} /> Clear
               </button>
             </div>
@@ -1131,7 +1144,7 @@ function App() {
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem', gap: '1rem' }}>
               <button 
                 className="reset-key-btn" 
-                onClick={() => setKeyConfig(prev => { const next = {...prev}; delete next[selectedKey]; return next; })}
+                onClick={() => { setKeyConfig(prev => { const next = {...prev}; delete next[selectedKey]; return next; }); addToast('Key configuration reset', 'info'); }}
               >
                 <Trash2 size={16} /> Reset Key
               </button>
@@ -1269,6 +1282,15 @@ function App() {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Toasts */}
+      <div className="toast-container">
+        {toasts.map(toast => (
+          <div key={toast.id} className={`toast toast-${toast.type}`}>
+            {toast.message}
+          </div>
+        ))}
       </div>
     </div>
   );
