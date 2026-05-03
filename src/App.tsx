@@ -1166,7 +1166,7 @@ function App() {
       </button>
 
       <button 
-        className={`build-mode-toggle-btn ${buildMode ? 'active' : ''}`} 
+        className={`build-mode-toggle-btn ${buildMode ? 'active' : ''} ${showSettings ? 'hidden-btn' : ''}`} 
         onClick={(e) => { 
           setBuildMode(!buildMode); 
           if (buildMode) setSelectedKey(null); // Closing build mode clears selection
