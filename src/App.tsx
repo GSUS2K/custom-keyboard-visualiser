@@ -1077,11 +1077,11 @@ function App() {
                    <input type="text" className="kbd-input" maxLength={5} value={keyConfig[selectedKey]?.label || ''} onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], label: e.target.value } }))} placeholder="Default" />
                  </div>
                  <div className="kbd-field">
-                   <label>Key Width (Span)</label>
+                   <label>Width (Span)</label>
                    <input type="number" className="kbd-input" min="1" max="24" value={keyConfig[selectedKey]?.span || ''} onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], span: e.target.value ? parseInt(e.target.value) : undefined } }))} placeholder="Default" />
                  </div>
                  <div className="kbd-field row-flex">
-                   <label>Key Visibility</label>
+                   <label>Visibility</label>
                    <button className={`kbd-toggle-btn ${keyConfig[selectedKey]?.hidden ? 'hidden-active' : ''}`} onClick={() => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], hidden: !prev[selectedKey]?.hidden } }))}>
                      {keyConfig[selectedKey]?.hidden ? <><EyeOff size={16} /> Hidden</> : <><Eye size={16} /> Visible</>}
                    </button>
@@ -1112,12 +1112,12 @@ function App() {
                    <label>Switch Sound</label>
                    <div className="select-test-group">
                      <select className="kbd-select" value={keyConfig[selectedKey]?.sound || 'default'} onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], sound: e.target.value === 'default' ? undefined : e.target.value } }))}>
-                       <option value="default">Default Match</option>
+                       <option value="default">Default</option>
                        <option value="linear">Thocky Linear</option>
                        <option value="tactile">Sharp Tactile</option>
                        <option value="clicky">Loud Clicky</option>
                        <option value="topre">Deep Topre</option>
-                       <option value="silent">Silent Linear</option>
+                       <option value="silent">Silent</option>
                        <option value="heavy_tactile">Massive Bump</option>
                        <option value="custom">Custom Synth</option>
                      </select>
