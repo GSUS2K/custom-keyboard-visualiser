@@ -592,7 +592,11 @@ function App() {
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     // Prevent global key capture if the user is typing in an input/select
-    if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLSelectElement) {
+    if (
+      (e.target instanceof HTMLInputElement && !['file', 'checkbox', 'radio'].includes(e.target.type)) || 
+      e.target instanceof HTMLTextAreaElement || 
+      e.target instanceof HTMLSelectElement
+    ) {
       return;
     }
 
@@ -898,6 +902,7 @@ function App() {
     };
     reader.readAsText(file);
     e.target.value = '';
+    e.target.blur();
   };
 
   const renderTextWords = () => {
