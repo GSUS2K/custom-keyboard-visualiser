@@ -1070,70 +1070,69 @@ function App() {
             </div>
             
             <div className="kbd-grid">
-               <div className="kbd-col">
+               <div className="kbd-card">
                  <h4>Visual Identity</h4>
-                 <div className="builder-row">
+                 <div className="kbd-field">
                    <label>Custom Label</label>
-                   <input type="text" maxLength={5} value={keyConfig[selectedKey]?.label || ''} onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], label: e.target.value } }))} placeholder="Default" />
+                   <input type="text" className="kbd-input" maxLength={5} value={keyConfig[selectedKey]?.label || ''} onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], label: e.target.value } }))} placeholder="Default" />
                  </div>
-                 <div className="builder-row">
+                 <div className="kbd-field">
                    <label>Key Width (Span)</label>
-                   <input type="number" min="1" max="24" value={keyConfig[selectedKey]?.span || ''} onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], span: e.target.value ? parseInt(e.target.value) : undefined } }))} placeholder="Default" style={{ width: '100px', textAlign: 'right', background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', padding: '0.6rem 1rem', borderRadius: '8px' }} />
+                   <input type="number" className="kbd-input" min="1" max="24" value={keyConfig[selectedKey]?.span || ''} onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], span: e.target.value ? parseInt(e.target.value) : undefined } }))} placeholder="Default" />
                  </div>
-                 <div className="builder-row">
+                 <div className="kbd-field row-flex">
                    <label>Key Visibility</label>
-                   <button className={`visibility-btn ${keyConfig[selectedKey]?.hidden ? 'hidden-active' : ''}`} onClick={() => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], hidden: !prev[selectedKey]?.hidden } }))}>
+                   <button className={`kbd-toggle-btn ${keyConfig[selectedKey]?.hidden ? 'hidden-active' : ''}`} onClick={() => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], hidden: !prev[selectedKey]?.hidden } }))}>
                      {keyConfig[selectedKey]?.hidden ? <><EyeOff size={16} /> Hidden</> : <><Eye size={16} /> Visible</>}
                    </button>
                  </div>
                </div>
 
-               <div className="kbd-col">
+               <div className="kbd-card">
                  <h4>Aesthetics</h4>
-                 <div className="builder-row">
+                 <div className="kbd-field row-flex">
                    <label>Keycap Color</label>
                    <div className="color-picker-wrapper">
-                     <input type="color" value={keyConfig[selectedKey]?.bg || '#ffffff'} onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], bg: e.target.value } }))} />
+                     <input type="color" className="kbd-color" value={keyConfig[selectedKey]?.bg || '#ffffff'} onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], bg: e.target.value } }))} />
                      <button className="clear-color-btn" title="Reset Color" onClick={() => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], bg: undefined } }))}><RotateCcw size={14} /></button>
                    </div>
                  </div>
-                 <div className="builder-row">
+                 <div className="kbd-field row-flex">
                    <label>Text Color</label>
                    <div className="color-picker-wrapper">
-                     <input type="color" value={keyConfig[selectedKey]?.text || '#000000'} onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], text: e.target.value } }))} />
+                     <input type="color" className="kbd-color" value={keyConfig[selectedKey]?.text || '#000000'} onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], text: e.target.value } }))} />
                      <button className="clear-color-btn" title="Reset Color" onClick={() => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], text: undefined } }))}><RotateCcw size={14} /></button>
                    </div>
                  </div>
                </div>
 
-               <div className="kbd-col">
+               <div className="kbd-card">
                  <h4>Acoustics</h4>
-                 <div className="builder-row" style={{ flexDirection: 'column', alignItems: 'stretch', gap: '0.8rem' }}>
-                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                     <label>Switch Sound</label>
-                     <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                       <select value={keyConfig[selectedKey]?.sound || 'default'} onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], sound: e.target.value === 'default' ? undefined : e.target.value } }))}>
-                         <option value="default">Default Match</option>
-                         <option value="linear">Thocky Linear</option>
-                         <option value="tactile">Sharp Tactile</option>
-                         <option value="clicky">Loud Clicky</option>
-                         <option value="topre">Deep Topre</option>
-                         <option value="silent">Silent Linear</option>
-                         <option value="heavy_tactile">Massive Bump</option>
-                         <option value="custom">Custom Synth</option>
-                       </select>
-                       <button className="test-sound-btn" onClick={() => playTypingSound(keyConfig[selectedKey]?.sound || switchType, keyConfig[selectedKey]?.synth)} title="Test Acoustic Profile"><Volume2 size={16} /> Test</button>
-                     </div>
+                 <div className="kbd-field">
+                   <label>Switch Sound</label>
+                   <div className="select-test-group">
+                     <select className="kbd-select" value={keyConfig[selectedKey]?.sound || 'default'} onChange={(e) => setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], sound: e.target.value === 'default' ? undefined : e.target.value } }))}>
+                       <option value="default">Default Match</option>
+                       <option value="linear">Thocky Linear</option>
+                       <option value="tactile">Sharp Tactile</option>
+                       <option value="clicky">Loud Clicky</option>
+                       <option value="topre">Deep Topre</option>
+                       <option value="silent">Silent Linear</option>
+                       <option value="heavy_tactile">Massive Bump</option>
+                       <option value="custom">Custom Synth</option>
+                     </select>
+                     <button className="test-sound-btn" onClick={() => playTypingSound(keyConfig[selectedKey]?.sound || switchType, keyConfig[selectedKey]?.synth)} title="Test Acoustic Profile"><Volume2 size={16} /> Test</button>
                    </div>
-                   {keyConfig[selectedKey]?.sound === 'custom' && (
-                     <div className="custom-synth-controls">
-                       <div className="builder-row"><label>Base Freq</label><input type="range" min="100" max="2000" step="10" value={keyConfig[selectedKey]?.synth?.freq || 400} onChange={(e) => { const val = parseFloat(e.target.value); setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { pitchVarMultiplier: 1, gainMultiplier: 1, q: 1.2 }), freq: val } } })); playTypingSound('custom', { ...(keyConfig[selectedKey]?.synth || { pitchVarMultiplier: 1, gainMultiplier: 1, q: 1.2 }), freq: val }); }} /></div>
-                       <div className="builder-row"><label>Pitch Bend</label><input type="range" min="0.5" max="2.0" step="0.1" value={keyConfig[selectedKey]?.synth?.pitchVarMultiplier || 1.0} onChange={(e) => { const val = parseFloat(e.target.value); setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { freq: 400, gainMultiplier: 1, q: 1.2 }), pitchVarMultiplier: val } } })); playTypingSound('custom', { ...(keyConfig[selectedKey]?.synth || { freq: 400, gainMultiplier: 1, q: 1.2 }), pitchVarMultiplier: val }); }} /></div>
-                       <div className="builder-row"><label>Gain</label><input type="range" min="0.1" max="3.0" step="0.1" value={keyConfig[selectedKey]?.synth?.gainMultiplier || 1.0} onChange={(e) => { const val = parseFloat(e.target.value); setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { freq: 400, pitchVarMultiplier: 1, q: 1.2 }), gainMultiplier: val } } })); playTypingSound('custom', { ...(keyConfig[selectedKey]?.synth || { freq: 400, pitchVarMultiplier: 1, q: 1.2 }), gainMultiplier: val }); }} /></div>
-                       <div className="builder-row"><label>Resonance</label><input type="range" min="0.1" max="5.0" step="0.1" value={keyConfig[selectedKey]?.synth?.q || 1.2} onChange={(e) => { const val = parseFloat(e.target.value); setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { freq: 400, pitchVarMultiplier: 1, gainMultiplier: 1 }), q: val } } })); playTypingSound('custom', { ...(keyConfig[selectedKey]?.synth || { freq: 400, pitchVarMultiplier: 1, gainMultiplier: 1 }), q: val }); }} /></div>
-                     </div>
-                   )}
                  </div>
+                 
+                 {keyConfig[selectedKey]?.sound === 'custom' && (
+                   <div className="kbd-synth-group">
+                     <div className="kbd-field-compact"><label>Base Freq</label><input type="range" className="kbd-range" min="100" max="2000" step="10" value={keyConfig[selectedKey]?.synth?.freq || 400} onChange={(e) => { const val = parseFloat(e.target.value); setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { pitchVarMultiplier: 1, gainMultiplier: 1, q: 1.2 }), freq: val } } })); playTypingSound('custom', { ...(keyConfig[selectedKey]?.synth || { pitchVarMultiplier: 1, gainMultiplier: 1, q: 1.2 }), freq: val }); }} /></div>
+                     <div className="kbd-field-compact"><label>Pitch Bend</label><input type="range" className="kbd-range" min="0.5" max="2.0" step="0.1" value={keyConfig[selectedKey]?.synth?.pitchVarMultiplier || 1.0} onChange={(e) => { const val = parseFloat(e.target.value); setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { freq: 400, gainMultiplier: 1, q: 1.2 }), pitchVarMultiplier: val } } })); playTypingSound('custom', { ...(keyConfig[selectedKey]?.synth || { freq: 400, gainMultiplier: 1, q: 1.2 }), pitchVarMultiplier: val }); }} /></div>
+                     <div className="kbd-field-compact"><label>Gain</label><input type="range" className="kbd-range" min="0.1" max="3.0" step="0.1" value={keyConfig[selectedKey]?.synth?.gainMultiplier || 1.0} onChange={(e) => { const val = parseFloat(e.target.value); setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { freq: 400, pitchVarMultiplier: 1, q: 1.2 }), gainMultiplier: val } } })); playTypingSound('custom', { ...(keyConfig[selectedKey]?.synth || { freq: 400, pitchVarMultiplier: 1, q: 1.2 }), gainMultiplier: val }); }} /></div>
+                     <div className="kbd-field-compact"><label>Resonance</label><input type="range" className="kbd-range" min="0.1" max="5.0" step="0.1" value={keyConfig[selectedKey]?.synth?.q || 1.2} onChange={(e) => { const val = parseFloat(e.target.value); setKeyConfig(prev => ({ ...prev, [selectedKey]: { ...prev[selectedKey], synth: { ...(prev[selectedKey]?.synth || { freq: 400, pitchVarMultiplier: 1, gainMultiplier: 1 }), q: val } } })); playTypingSound('custom', { ...(keyConfig[selectedKey]?.synth || { freq: 400, pitchVarMultiplier: 1, gainMultiplier: 1 }), q: val }); }} /></div>
+                   </div>
+                 )}
                </div>
             </div>
           </div>
@@ -1161,8 +1160,23 @@ function App() {
         className={`settings-toggle-btn ${showSettings ? 'open' : ''}`} 
         onClick={(e) => { setShowSettings(!showSettings); e.currentTarget.blur(); }}
         title="Toggle Studio Settings"
+        style={{ top: '2rem' }}
       >
         <Settings size={24} />
+      </button>
+
+      <button 
+        className={`build-mode-toggle-btn ${buildMode ? 'active' : ''}`} 
+        onClick={(e) => { 
+          setBuildMode(!buildMode); 
+          if (buildMode) setSelectedKey(null); // Closing build mode clears selection
+          setShowSettings(false); 
+          e.currentTarget.blur(); 
+        }}
+        title="Toggle Key Builder Mode"
+        style={{ top: '6rem' }}
+      >
+        <Wrench size={20} />
       </button>
 
       <div className={`sidebar controls-wrapper ${showSettings ? '' : 'hidden'}`}>
