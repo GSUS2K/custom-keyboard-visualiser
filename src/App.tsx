@@ -994,7 +994,8 @@ function App() {
               </div>
               {gameFinished && (
                 <div className="typeracer-finish">
-                  Test Completed! Press <strong>Enter</strong> or click Restart to try again.
+                  <h3>Test Completed!</h3>
+                  <p>Press <kbd>Enter</kbd> or click <RotateCcw size={14} style={{display: 'inline', verticalAlign: 'middle', margin: '0 4px'}} /> Restart to try again.</p>
                 </div>
               )}
             </div>
@@ -1272,7 +1273,7 @@ function App() {
 
           <div className="control-group">
             <label>OS Layout</label>
-            <select value={osLayout} onChange={(e) => setOsLayout(e.target.value as any)}>
+            <select value={osLayout} onChange={(e) => { setOsLayout(e.target.value as any); e.target.blur(); }}>
               <option value="windows">Windows</option>
               <option value="mac">macOS</option>
               <option value="linux">Linux</option>
@@ -1329,12 +1330,12 @@ function App() {
           <h3>Data Management</h3>
           <div className="control-group">
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', width: '100%' }}>
-              <button className="data-mgt-btn" onClick={handleExportProfile}>
+              <button className="data-mgt-btn" onClick={(e) => { handleExportProfile(); e.currentTarget.blur(); }}>
                 <Download size={18} /> Export Profile
               </button>
               <button className="data-mgt-btn" style={{ position: 'relative' }}>
                 <Upload size={18} /> Import Profile
-                <input type="file" accept=".json" onChange={handleImportProfile} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }} />
+                <input type="file" accept=".json" onChange={(e) => { handleImportProfile(e); e.target.blur(); }} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }} />
               </button>
             </div>
           </div>
