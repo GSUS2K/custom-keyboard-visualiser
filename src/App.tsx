@@ -1159,9 +1159,23 @@ function App() {
                 onClick={() => setSelectedKey(null)}
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
               >
-                <Save size={18} /> Save & Close
+                <Save size={18} /> Confirm
               </button>
             </div>
+            <button 
+              className="reset-key-btn" 
+              style={{ width: '100%', marginTop: '0.8rem', background: 'transparent', border: '1px solid #ef4444', color: '#ef4444' }}
+              onClick={(e) => {
+                if (window.confirm('Are you sure you want to revert ALL custom key designs on this board?')) {
+                  setKeyConfig({});
+                  setSelectedKey(null);
+                  addToast('All custom key overrides reverted.', 'success');
+                }
+                e.currentTarget.blur();
+              }}
+            >
+              <RotateCcw size={16} /> Revert All Key Changes
+            </button>
           </div>
         )}
 
