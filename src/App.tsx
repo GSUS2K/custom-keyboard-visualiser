@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef, createContext, useContext } f
 import { RotateCcw, Volume2, Save, X, Trash2, Eye, EyeOff, Download, Upload, Edit3, Settings, Sparkles, Keyboard as KeyboardIcon, Box, Flag, Wrench } from 'lucide-react';
 import './index.css';
 
-export const KeyboardConfigContext = createContext<{ buildMode: boolean, config: Record<string, { bg?: string, text?: string, sound?: string, label?: string, span?: number, hidden?: boolean, synth?: { freq: number, pitchVarMultiplier: number, gainMultiplier: number, q: number } }> }>({ buildMode: false, config: {} });
+export const KeyboardConfigContext = createContext<{ buildMode: boolean, config: Record<string, { bg?: string, text?: string, sound?: string, label?: string, span?: number, hidden?: boolean, synth?: { freq: number, pitchVarMultiplier: number, gainMultiplier: number, q: number } }>, osLayout: 'windows' | 'mac' | 'linux' }>({ buildMode: false, config: {}, osLayout: 'windows' });
 
 // Reusable Audio Context and Analyser
 let audioCtx: AudioContext | null = null;
@@ -162,31 +162,35 @@ const generateQuote = (wordCount: number) => {
   return q.join(' ');
 }
 
-const Key = ({ label, subLabel, span = 4, className = '', keyCode, activeKeys, onManualPress }: any) => {
-  const { buildMode, config } = useContext(KeyboardConfigContext);
-  const keyConfig = config[keyCode] || {};
-
-  const customSpan = keyConfig.span !== undefined ? keyConfig.span : span;
-
-  if (keyConfig.hidden && !buildMode) return <div style={{ gridColumn: `span ${customSpan}`, visibility: 'hidden' }} />;
+const Key = ({ label, subLabel, keyCode, span = 4, className = '', activeKeys, onManualPress }: any) => {
+  const { buildMode, config, osLayout } = useContext(KeyboardConfigContext);
+  
+  let displayLabel = label;
+  if (keyCode === 'MetaLeft' || keyCode === 'MetaRight') {
+    if (osLayout === 'mac') displayLabel = 'Cmd';
+    else if (osLayout === 'linux') displayLabel = 'Super';
+  } else if (keyCode === 'AltLeft' || keyCode === 'AltRight') {
+    if (osLayout === 'mac') displayLabel = 'Opt';
+  }
 
   const isPressed = activeKeys.has(keyCode);
-  
-  const customBg = keyConfig.bg;
-  const customColor = keyConfig.text;
-  const displayLabel = (keyConfig.label !== undefined && keyConfig.label !== '') ? keyConfig.label : label;
+  const conf = config[keyCode] || {};
+
+  if (conf.hidden && !buildMode) return <div style={{ gridColumn: `span ${conf.span || span}` }} />;
+
+  const customStyle: React.CSSProperties = {
+    gridColumn: `span ${conf.span !== undefined ? conf.span : span}`,
+    ...(conf.bg ? { background: conf.bg, borderColor: conf.bg } : {}),
+    ...(conf.text ? { color: conf.text } : {})
+  };
 
   return (
     <div 
-      className={`key ${className} ${isPressed ? 'active' : ''} ${keyConfig.hidden ? 'hidden-key-builder' : ''}`}
-      style={{ 
-        gridColumn: `span ${customSpan}`,
-        ...(customBg ? { background: customBg, borderColor: customBg } : {}),
-        ...(customColor ? { color: customColor } : {})
-      }}
+      className={`key ${className} ${isPressed ? 'active' : ''} ${conf.hidden ? 'hidden-key-builder' : ''}`}
+      style={customStyle}
       onMouseDown={() => onManualPress(keyCode)}
     >
-      {displayLabel}
+      {conf.label !== undefined && conf.label !== '' ? conf.label : displayLabel}
       {subLabel && <div className="sub-label">{subLabel}</div>}
     </div>
   );
@@ -234,13 +238,13 @@ function Keyboard40({ activeKeys, onManualPress }: any) {
       <Key label="," subLabel="<" keyCode="Comma" activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="." subLabel=">" keyCode="Period" activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="/" subLabel="?" keyCode="Slash" activeKeys={activeKeys} onManualPress={onManualPress} />
-      <Key label="Shift" keyCode="ShiftRight" activeKeys={activeKeys} onManualPress={onManualPress} className="accent" />
+      <Key label="Shift" keyCode="ShiftRight" span={3} activeKeys={activeKeys} onManualPress={onManualPress} className="accent" />
 
       <Key label="Ctrl" keyCode="ControlLeft" activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="Win" keyCode="MetaLeft" activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="Alt" keyCode="AltLeft" activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="Lower" keyCode="Fn" activeKeys={activeKeys} onManualPress={onManualPress} className="accent" />
-      <Key label="" keyCode="Space" span={8} activeKeys={activeKeys} onManualPress={onManualPress} />
+      <Key label="" keyCode="Space" span={12} activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="Raise" keyCode="AltRight" activeKeys={activeKeys} onManualPress={onManualPress} className="accent" />
       <Key label="Left" keyCode="ArrowLeft" activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="Down" keyCode="ArrowDown" activeKeys={activeKeys} onManualPress={onManualPress} />
@@ -308,9 +312,7 @@ function Keyboard60({ activeKeys, onManualPress }: any) {
       <Key label="&lt;" subLabel="," keyCode="Comma" activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="&gt;" subLabel="." keyCode="Period" activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="?" subLabel="/" keyCode="Slash" activeKeys={activeKeys} onManualPress={onManualPress} />
-      <Key label="Shift" keyCode="ShiftRight" span={7} className="bottom" activeKeys={activeKeys} onManualPress={onManualPress} />
-      <Key label="↑" keyCode="ArrowUp" className="center" activeKeys={activeKeys} onManualPress={onManualPress} />
-      <Key label="PgDn" keyCode="PageDown" activeKeys={activeKeys} onManualPress={onManualPress} />
+      <Key label="Shift" keyCode="ShiftRight" span={11} className="bottom" activeKeys={activeKeys} onManualPress={onManualPress} />
 
       <Key label="Ctrl" keyCode="ControlLeft" span={5} className="bottom" activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="Win" keyCode="MetaLeft" span={5} className="bottom" activeKeys={activeKeys} onManualPress={onManualPress} />
@@ -396,7 +398,6 @@ function Keyboard65({ activeKeys, onManualPress }: any) {
       <Key label="Alt" keyCode="AltRight" span={4} className="bottom" activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="Fn" keyCode="Fn" span={4} className="bottom" activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="Ctrl" keyCode="ControlRight" span={4} className="bottom" activeKeys={activeKeys} onManualPress={onManualPress} />
-      <Gap span={1} />
       <Key label="←" keyCode="ArrowLeft" className="center" activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="↓" keyCode="ArrowDown" className="center" activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="→" keyCode="ArrowRight" className="center" activeKeys={activeKeys} onManualPress={onManualPress} />
@@ -517,6 +518,7 @@ function App() {
   const [theme, setTheme] = useState('default');
   const [profile, setProfile] = useState('cherry');
   const [preset, setPreset] = useState('keychron_q1');
+  const [osLayout, setOsLayout] = useState<'windows' | 'mac' | 'linux'>('windows');
 
   // TypeRacer Game State
   const [wordCountTarget, setWordCountTarget] = useState(20);
@@ -975,13 +977,12 @@ function App() {
               <div className="typeracer-text" style={{ transform: `translateX(calc(${typed.length} * -1ch))` }}>
                 {renderTextWords()}
               </div>
+              {gameFinished && (
+                <div className="typeracer-finish">
+                  Test Completed! Press <strong>Enter</strong> or click Restart to try again.
+                </div>
+              )}
             </div>
-            
-            {gameFinished && (
-              <div className="typeracer-finish">
-                Test Completed! Press <strong>Enter</strong> or click Restart to try again.
-              </div>
-            )}
           </div>
         ) : (
           <div className="sandbox-container">
@@ -1171,7 +1172,7 @@ function App() {
             {keyboardType !== '40' && <div className="led active" title="Connection"></div>}
           </div>
 
-          <KeyboardConfigContext.Provider value={{ buildMode, config: keyConfig }}>
+          <KeyboardConfigContext.Provider value={{ buildMode, config: keyConfig, osLayout }}>
             {keyboardType === '40' && <Keyboard40 activeKeys={activeKeys} onManualPress={handleManualPress} />}
             {keyboardType === '60' && <Keyboard60 activeKeys={activeKeys} onManualPress={handleManualPress} />}
             {keyboardType === '65' && <Keyboard65 activeKeys={activeKeys} onManualPress={handleManualPress} />}
@@ -1232,6 +1233,15 @@ function App() {
             <option value="keychron_q1">Keychron Q1 (Tactile)</option>
             <option value="cyberboard">Angry Miao Cyberboard (Heavy Tactile)</option>
             <option value="planck">Planck EZ Ortholinear (Clicky)</option>
+          </select>
+        </div>
+
+        <div className="control-group">
+          <label>OS Layout</label>
+          <select value={osLayout} onChange={(e) => setOsLayout(e.target.value as any)}>
+            <option value="windows">Windows</option>
+            <option value="mac">macOS</option>
+            <option value="linux">Linux</option>
           </select>
         </div>
 
