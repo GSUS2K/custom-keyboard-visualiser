@@ -403,10 +403,6 @@ body {
 }
 
 .sidebar {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  bottom: 1rem;
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
@@ -419,7 +415,7 @@ body {
   -webkit-backdrop-filter: blur(12px);
   width: 360px;
   max-width: 90vw;
-  z-index: 1000;
+  max-height: calc(100vh - 4rem);
   overflow-y: auto;
   flex-shrink: 0;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -427,8 +423,11 @@ body {
 
 .sidebar.hidden {
   opacity: 0;
+  width: 0;
+  padding: 0;
+  margin: 0;
+  border: none;
   pointer-events: none;
-  transform: translateX(120%);
 }
 
 .sidebar-header {

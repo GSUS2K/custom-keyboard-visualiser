@@ -624,14 +624,18 @@ function App() {
       return;
     }
 
-    if (e.ctrlKey || e.metaKey || e.altKey) {
-      setActiveKeys(prev => new Set(prev).add(e.code));
-      return;
+    if (!e.ctrlKey && !e.metaKey && !e.altKey && (e.key.length === 1 || e.key === 'Backspace' || e.key === ' ')) {
+      e.preventDefault();
     }
 
     if (soundEnabled) {
       const keyConf = keyConfig[e.code];
       playTypingSound(keyConf?.sound || switchType, keyConf?.synth);
+    }
+
+    if (e.ctrlKey || e.metaKey || e.altKey) {
+      setActiveKeys(prev => new Set(prev).add(e.code));
+      return;
     }
     
     if (particlesEnabled && e.key.length === 1) {
