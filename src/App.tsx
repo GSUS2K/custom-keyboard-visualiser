@@ -308,7 +308,9 @@ function Keyboard60({ activeKeys, onManualPress }: any) {
       <Key label="&lt;" subLabel="," keyCode="Comma" activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="&gt;" subLabel="." keyCode="Period" activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="?" subLabel="/" keyCode="Slash" activeKeys={activeKeys} onManualPress={onManualPress} />
-      <Key label="Shift" keyCode="ShiftRight" span={11} className="bottom" activeKeys={activeKeys} onManualPress={onManualPress} />
+      <Key label="Shift" keyCode="ShiftRight" span={7} className="bottom" activeKeys={activeKeys} onManualPress={onManualPress} />
+      <Key label="↑" keyCode="ArrowUp" className="center" activeKeys={activeKeys} onManualPress={onManualPress} />
+      <Key label="PgDn" keyCode="PageDown" activeKeys={activeKeys} onManualPress={onManualPress} />
 
       <Key label="Ctrl" keyCode="ControlLeft" span={5} className="bottom" activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="Win" keyCode="MetaLeft" span={5} className="bottom" activeKeys={activeKeys} onManualPress={onManualPress} />
@@ -394,6 +396,7 @@ function Keyboard65({ activeKeys, onManualPress }: any) {
       <Key label="Alt" keyCode="AltRight" span={4} className="bottom" activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="Fn" keyCode="Fn" span={4} className="bottom" activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="Ctrl" keyCode="ControlRight" span={4} className="bottom" activeKeys={activeKeys} onManualPress={onManualPress} />
+      <Gap span={1} />
       <Key label="←" keyCode="ArrowLeft" className="center" activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="↓" keyCode="ArrowDown" className="center" activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="→" keyCode="ArrowRight" className="center" activeKeys={activeKeys} onManualPress={onManualPress} />
@@ -488,9 +491,8 @@ function Keyboard75({ activeKeys, onManualPress }: any) {
       <Key label="&lt;" subLabel="," keyCode="Comma" activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="&gt;" subLabel="." keyCode="Period" activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="?" subLabel="/" keyCode="Slash" activeKeys={activeKeys} onManualPress={onManualPress} />
-      <Key label="Shift" keyCode="ShiftRight" span={7} className="bottom" activeKeys={activeKeys} onManualPress={onManualPress} />
+      <Key label="Shift" keyCode="ShiftRight" span={8} className="bottom" activeKeys={activeKeys} onManualPress={onManualPress} />
       <Key label="↑" keyCode="ArrowUp" className="center" activeKeys={activeKeys} onManualPress={onManualPress} />
-      <Gap span={1} />
       <Key label="End" keyCode="End" activeKeys={activeKeys} onManualPress={onManualPress} />
 
       <Key label="Ctrl" keyCode="ControlLeft" span={5} className="bottom" activeKeys={activeKeys} onManualPress={onManualPress} />
